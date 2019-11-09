@@ -2,7 +2,6 @@ import datetime
 from flask import Flask, request
 import werkzeug
 import numpy
-import scipy.misc
 from CRUD_m import create_data
 from CRUD_m import read_data
 from CRUD_m import close_connection
@@ -72,7 +71,8 @@ def handle_request():
     filename = werkzeug.utils.secure_filename(imagefile.filename)
     print("\nReceived image File name : " + imagefile.filename)
     imagefile.save(filename)
-    img = scipy.misc.imread(filename, mode="L")
+    with open(filename, 'rb' ) as f:
+        data = f.read()
     _url = 'https://westus2.api.cognitive.microsoft.com/face/v1.0/detect'
     _key = 'bc027dc227484433a77d7b613807d230' #Here you have to paste your primary key
     headers = dict()
@@ -86,6 +86,6 @@ def handle_request():
         'returnFaceAttributes': 'age,gender,headPose,smile,facialHair,glasses,emotion,hair,makeup,occlusion,accessories,blur,exposure,noise',
     }
 
-    result = processRequest( json, img, headers, params, _url )
+    result = processRequest( json, data, headers, params, _url )
     print(result)
     return result
