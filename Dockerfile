@@ -20,7 +20,9 @@ RUN apt-get update \
     && pip install gunicorn \ 
     && pip install virtualenv \
     && pip install pyodbc \
-    && pip install flask 
+    && pip install flask \
+    && pip install Werkzeug \
+    && pip install numpy
 
 WORKDIR ${HOME_SITE}
 
