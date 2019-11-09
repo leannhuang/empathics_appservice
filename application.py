@@ -1,5 +1,6 @@
 import datetime
 from flask import Flask, request
+
 import werkzeug
 import numpy
 from CRUD_m import create_data
@@ -65,9 +66,9 @@ def health_check():
     return 'server is running'
 
 
-@app.route('/', methods = ['GET', 'POST'])
+@app.route('/pic_post', methods = ['GET', 'POST'])
 def handle_request():
-    imagefile = flask.request.files['image']
+    imagefile = Flask.request.files['image']
     filename = werkzeug.utils.secure_filename(imagefile.filename)
     print("\nReceived image File name : " + imagefile.filename)
     imagefile.save(filename)
