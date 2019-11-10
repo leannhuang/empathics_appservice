@@ -6,8 +6,11 @@ from CRUD_m import create_data
 from CRUD_m import read_data
 from CRUD_m import close_connection
 from CRUD_m import get_connection
+from process_image import processRequest
 
 app = Flask(__name__)
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB
+
 
 @app.route("/paddle_count", methods = ['POST'])
 def paddle_count():
