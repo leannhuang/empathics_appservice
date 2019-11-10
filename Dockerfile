@@ -17,14 +17,14 @@ RUN apt-get update \
         freetds-common freetds-bin freetds-dev \
     && pip install --upgrade pip \
     && pip install subprocess32 \
-    && pip install gunicorn \ 
-    && pip install requests \ 
+    && pip install gunicorn \
     && pip install virtualenv \
     && pip install pyodbc \
     && pip install flask \
     && pip install Werkzeug \
     && pip install numpy
 
+RUN pip install requests
 WORKDIR ${HOME_SITE}
 
 EXPOSE 8000
