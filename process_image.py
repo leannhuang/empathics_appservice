@@ -1,8 +1,5 @@
 import time
 import requests
-import cv2
-import operator
-import numpy as np
 
 def processRequest( json, data, headers, params, _url ):
 
@@ -50,24 +47,3 @@ def processRequest( json, data, headers, params, _url ):
         break
 
     return result
-
-
-
-def renderResultOnImage( result, img ):
-
-    """Display the obtained results onto the input image"""
-
-    for currFace in result:
-        faceRectangle = currFace['faceRectangle']
-        cv2.rectangle( img,(faceRectangle['left'],faceRectangle['top']),
-                           (faceRectangle['left']+faceRectangle['width'], faceRectangle['top'] + faceRectangle['height']),
-                       color = (255,0,0), thickness = 5 )
-
-
-    for currFace in result:
-        faceRectangle = currFace['faceRectangle']
-        currEmotion = max(currFace['scores'].items(), key=operator.itemgetter(1))[0]
-
-
-        textToWrite = "%s" % ( currEmotion )
-        cv2.putText( img, textToWrite, (faceRectangle['left'],faceRectangle['top']-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,0,0), 1 )
