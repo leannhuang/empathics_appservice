@@ -91,7 +91,7 @@ def handle_request():
     return result
 
 @app.route('/upload_test', methods = ['GET', 'POST'])
-def handle_request():
+def upload_test():
     imagefile = request.files['image']
     filename = werkzeug.utils.secure_filename(imagefile.filename)
     print("\nReceived image File name : " + imagefile.filename)
