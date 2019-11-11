@@ -90,5 +90,23 @@ def handle_request():
     }
 
     result = processRequest( json, data, headers, params, _url )
-    print(result)
-    return result
+    firstface_dic = result[0]
+    #print(result[0])
+    faceAttributes_dic = firstface_dic['faceAttributes']
+    #print(faceAttributes_dic)
+    time = sec
+    #interval = math.ceil(sec/10)
+    type = "angry"
+    video_id = "015"
+    smile = faceAttributes_dic['smile']
+    gender = faceAttributes_dic['gender']
+    #age = faceAttributes_dic['age']
+    anger = faceAttributes_dic['emotion']['anger']
+    contempt = faceAttributes_dic['emotion']['contempt']
+    disgust = faceAttributes_dic['emotion']['disgust']
+    fear = faceAttributes_dic['emotion']['fear']
+    happiness = faceAttributes_dic['emotion']['happiness']
+    neutral = faceAttributes_dic['emotion']['neutral']
+    sadness = faceAttributes_dic['emotion']['sadness']
+    surprise = faceAttributes_dic['emotion']['surprise']
+    return smile

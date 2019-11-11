@@ -8,10 +8,15 @@ def test_upload():
     with app.app_context():
         client = app.test_client()
         file = open('./test_file.jpg', 'rb')
-        resp = client.post(
-            'http://empathics.azurewebsites.net/post_pic',
+        resp = client.get(
+            'http://empathics.azurewebsites.net/health_check',
             content_type='multipart/form-data',
             data={
                 'file': (file, 'test_file.jpg'),
             },
         )
+        print(resp)
+
+
+
+test_upload()
