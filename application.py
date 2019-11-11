@@ -106,4 +106,4 @@ def handle_request():
     neutral = faceAttributes_dic['emotion']['neutral']
     sadness = faceAttributes_dic['emotion']['sadness']
     surprise = faceAttributes_dic['emotion']['surprise']
-    return smile
+    return str(smile)
