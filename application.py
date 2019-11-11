@@ -107,8 +107,8 @@ def handle_request():
     sadness = faceAttributes_dic['emotion']['sadness']
     surprise = faceAttributes_dic['emotion']['surprise']
     connection = get_connection()
-    datetime = datetime.datetime.now()
-    data = {'session_id':1, 'time':1, 'seq':1, 'face_smile':smile, 'face_anger':anger,'face_contempt':contempt,'face_disgust':disgust,'face_fear':fear,'face_happiness':happiness,'face_neutral':neutral,'face_sadness':sadness,'face_surprise':surprise,'text_senti_score':0,'text_senti_avg':0,'text_senti_std':0,'text_senti_min':0,'text_senti_max':0,'datetime':datetime}
+    date_time = datetime.datetime.now()
+    data = {'session_id':1, 'time':1, 'seq':1, 'face_smile':smile, 'face_anger':anger,'face_contempt':contempt,'face_disgust':disgust,'face_fear':fear,'face_happiness':happiness,'face_neutral':neutral,'face_sadness':sadness,'face_surprise':surprise,'text_senti_score':0,'text_senti_avg':0,'text_senti_std':0,'text_senti_min':0,'text_senti_max':0,'datetime':date_time}
     table_name = 'transaction'
     create_data(table_name, data, connection)
     close_connection(connection)
