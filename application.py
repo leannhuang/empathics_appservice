@@ -94,10 +94,7 @@ def handle_request():
     #print(result[0])
     faceAttributes_dic = firstface_dic['faceAttributes']
     #print(faceAttributes_dic)
-    time = sec
     #interval = math.ceil(sec/10)
-    type = "angry"
-    video_id = "015"
     smile = faceAttributes_dic['smile']
     gender = faceAttributes_dic['gender']
     #age = faceAttributes_dic['age']
