@@ -14,7 +14,8 @@ RUN apt-get update \
         tcptraceroute \
         g++ \
         unixodbc-dev \
-        freetds-common freetds-bin freetds-dev \
+        unixodbc \
+        freetds-common freetds-bin freetds-dev tdsodbc\
     && pip install --upgrade pip \
     && pip install subprocess32 \
     && pip install gunicorn \
