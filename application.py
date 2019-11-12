@@ -90,8 +90,11 @@ def handle_request():
     }
 
     result = processRequest( json, data, headers, params, _url )
-    if result is None:
+
+    if result == []:
         return 'no face'
+    elif result is None:
+        return 'no picture'
     firstface_dic = result[0]
     #print(result[0])
     faceAttributes_dic = firstface_dic['faceAttributes']
@@ -115,4 +118,5 @@ def handle_request():
     table_name = 'test'
     create_data(table_name, data, connection)
     close_connection(connection)
+
     return str(1)
