@@ -90,6 +90,8 @@ def handle_request():
     }
 
     result = processRequest( json, data, headers, params, _url )
+    if result is None:
+        return 'no face'
     firstface_dic = result[0]
     #print(result[0])
     faceAttributes_dic = firstface_dic['faceAttributes']
