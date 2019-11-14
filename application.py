@@ -68,7 +68,56 @@ def health_check():
     return 'server is running'
 
 
-@app.route('/post_pic', methods = ['GET', 'POST'])
+@app.route('/post_pic_test', methods = ['GET', 'POST'])
+def handle_request():
+    imagefile = request.files['image']
+    filename = werkzeug.utils.secure_filename(imagefile.filename)
+    imagefile.save(filename)
+    with open(filename, 'rb' ) as f:
+        data = f.read()
+    _url = 'https://westus2.api.cognitive.microsoft.com/face/v1.0/detect'
+    _key = 'bc027dc227484433a77d7b613807d230' #Here you have to paste your primary key
+    headers = dict()
+    headers['Ocp-Apim-Subscription-Key'] = _key
+    headers['Content-Type'] = 'application/octet-stream'
+
+    json = None
+    params = {
+        'returnFaceId': 'true',
+        'returnFaceLandmarks': 'false',
+        'returnFaceAttributes': 'age,gender,headPose,smile,facialHair,glasses,emotion,hair,makeup,occlusion,accessories,blur,exposure,noise',
+    }
+
+    result = processRequest( json, data, headers, params, _url )
+
+    if result == []:
+        return str(4) # no face
+    elif result is None:
+        return str(5) # no picture
+    firstface_dic = result[0]
+    #print(result[0])
+    faceAttributes_dic = firstface_dic['faceAttributes']
+    #print(faceAttributes_dic)
+    #interval = math.ceil(sec/10)
+    gender = faceAttributes_dic['gender']
+    smile = faceAttributes_dic['smile']
+    anger = faceAttributes_dic['emotion']['anger']
+    contempt = faceAttributes_dic['emotion']['contempt']
+    disgust = faceAttributes_dic['emotion']['disgust']
+    fear = faceAttributes_dic['emotion']['fear']
+    happiness = faceAttributes_dic['emotion']['happiness']
+    neutral = faceAttributes_dic['emotion']['neutral']
+    sadness = faceAttributes_dic['emotion']['sadness']
+    surprise = faceAttributes_dic['emotion']['surprise']
+    neg_emotion_list = [anger, contempt, disgust, fear, sadness, surprise]
+    if max(neg_emotion_list) > 0.01:
+        return str(1) # negative
+    elif smile > 0.8:
+        return 2 # positive
+    else:
+        return 0 # negative
+
+@app.route('/post_pic, methods = ['GET', 'POST'])
 def handle_request():
     imagefile = request.files['image']
     filename = werkzeug.utils.secure_filename(imagefile.filename)
