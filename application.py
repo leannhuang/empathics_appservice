@@ -191,14 +191,3 @@ def handle_request():
     table_name = 'test'
     create_data(table_name, data, connection)
     close_connection(connection)
-
-
-@app.route('/post_pic_test', methods = ['POST'])
-def handle_request_test():
-    imagefile = request.files['image']
-    filename = werkzeug.utils.secure_filename(imagefile.filename)
-    imagefile.save(filename)
-    with open(filename, 'rb' ) as f:
-        data = f.read()
-
-    return str(1)
