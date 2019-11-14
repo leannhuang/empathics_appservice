@@ -2,6 +2,7 @@ import datetime
 from flask import Flask, request
 import werkzeug
 import numpy
+import uuid
 from CRUD_m import create_data
 from CRUD_m import read_data
 from CRUD_m import close_connection
@@ -48,6 +49,26 @@ def register_device():
     else:
         return str(0)
 
+@app.route('/post_senti_socre', methods = ['POST'])
+def handle_senti_socre_request():
+    # time = request.files['time']
+    sentiment_score = request.json['sentiment_score']
+    # section_ID = request.files['section_ID']
+    # sequence_ID = request.files['sequence_ID']
+    # connection = get_connection()
+    # data = {
+    #     "time": time,
+    #     "sentiment_score": sentiment_score,
+    #     "section_ID":section_ID,
+    #     "sequence_ID":sequence_ID,
+    # }
+    # table_name = 'sentiment_table'
+    # create_data(table_name, data, connection)
+    # close_connection(connection)
+    print(sentiment_score, type(sentiment_score))
+    return str(1)
+# curl --data '{"time":"10","sentiment_score":"20","section_ID":"30","sequence_ID":"40"}' localhose:8000/post_senti_socre
+
 @app.route("/return_device", methods = ['POST'])
 def return_device():
     patient_id = request.json['patient_id']
@@ -63,10 +84,13 @@ def return_device():
         condition = {'device_id': device_id}
         update_data(table_name, data, condition)
 
+@app.route('/get_session_id', methods = ['GET'])
+def get_guid():
+    return reuuid.uuid4().hex
+
 @app.route('/health_check', methods = ['GET'])
 def health_check():
     return 'server is running'
-
 
 @app.route('/post_pic_test', methods = ['POST'])
 def handle_request_test():
@@ -167,5 +191,14 @@ def handle_request():
     table_name = 'test'
     create_data(table_name, data, connection)
     close_connection(connection)
+
+
+@app.route('/post_pic_test', methods = ['POST'])
+def handle_request_test():
+    imagefile = request.files['image']
+    filename = werkzeug.utils.secure_filename(imagefile.filename)
+    imagefile.save(filename)
+    with open(filename, 'rb' ) as f:
+        data = f.read()
 
     return str(1)
