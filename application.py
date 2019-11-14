@@ -68,8 +68,8 @@ def health_check():
     return 'server is running'
 
 
-@app.route('/post_pic_test', methods = ['GET', 'POST'])
-def handle_request():
+@app.route('/post_pic_test', methods = ['POST'])
+def handle_request_test():
     imagefile = request.files['image']
     filename = werkzeug.utils.secure_filename(imagefile.filename)
     imagefile.save(filename)
@@ -113,11 +113,11 @@ def handle_request():
     if max(neg_emotion_list) > 0.01:
         return str(1) # negative
     elif smile > 0.8:
-        return 2 # positive
+        return str(2) # positive
     else:
-        return 0 # negative
+        return str(0) # negative
 
-@app.route('/post_pic, methods = ['GET', 'POST'])
+@app.route('/post_pic', methods = ['POST'])
 def handle_request():
     imagefile = request.files['image']
     filename = werkzeug.utils.secure_filename(imagefile.filename)
