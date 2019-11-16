@@ -7,7 +7,7 @@ import pyodbc
 # Return the sql connection
 def get_connection():
     server = 'empthetic.database.windows.net'
-    database = 'Empthetic'
+    database = 'Empathics'
     username = 'vulcan'
     password = 'P@ssw0rd'
     driver = '{FreeTDS}'
@@ -28,22 +28,18 @@ def close_connection(connection):
 def create_data(table_name, data, connection):
     str = ""
     value_list = []
-    #print(data)
     for i in range(len(data)):
         tmpstr = "?,"
         str = str + tmpstr
     sql_query = str[:-1]
     sql_query = "Insert Into " + table_name + " Values("+sql_query+")"
     cursor = connection.cursor()
-
     for key in data:
          value_list.append(data[key])
-
     cursor.execute(sql_query, value_list)
     connection.commit()
-    #print('Data Saved')
     return connection
-    # Commit the data
+
 
 
 
@@ -91,3 +87,18 @@ def update_data(table_name, data, condition_id):
     cursor.execute(sql_query, value_list)
     connection.commit()
     print('Data Updated Successfully')
+
+
+def calculate_features(table_name, data, connection):
+    connection = get_connection()
+    cursor = connection.cursor()
+    sql_query = "Insert Into " + table_name + " Values("+sql_query+")"
+    cursor = connection.cursor()
+    sql_query = "SELECT AVG(text_senti_score) as text_senti_avg, STDEV(text_senti_score) as [text_senti_std], MIN(text_senti_score) as [text_senti_min], MAX(text_senti_score) as [text_senti_max] FROM transaction_table where seq="+seq +"and session_id ="+session_id
+    result = cursor.execute(sql_query)
+    connection.commit()
+    text_senti_avg = result.text_senti_avg
+    text_senti_std = result.text_senti_std
+    text_senti_min = result.text_senti_min
+    text_senti_max = result.text_senti_max
+    return avg, std, min, max
