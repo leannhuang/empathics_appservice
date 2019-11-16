@@ -41,6 +41,27 @@ def create_data(table_name, data, connection):
     return connection
 
 
+def insert_data(table_name, data, connection):
+    str = ""
+    str_col = ""
+    value_list = []
+    for i in range(len(data)):
+        tmpstr = "?,"
+        str = str + tmpstr
+    sql_query = str[:-1]
+    for key in data:
+        print(key)
+        str_col = str_col + " " + key+","
+    column_name = str_col[:-1]
+    print(column_name)
+    sql_query = "Insert Into " + table_name +"("+ column_name + ")" +" Values("+sql_query+")"
+    print(sql_query)
+    cursor = connection.cursor()
+    for key in data:
+         value_list.append(data[key])
+    cursor.execute(sql_query, value_list)
+    connection.commit()
+    return connection
 
 
 def read_data(table_name, data):

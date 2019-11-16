@@ -3,7 +3,7 @@ from flask import Flask, request
 import werkzeug
 import numpy
 import uuid
-from CRUD_m import create_data
+from CRUD_m import insert_data
 from CRUD_m import read_data
 from CRUD_m import close_connection
 from CRUD_m import get_connection
