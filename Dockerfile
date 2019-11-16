@@ -26,6 +26,7 @@ RUN apt-get update \
     && pip install numpy
 
 RUN pip install requests
+RUN pip install uuid
 WORKDIR ${HOME_SITE}
 
 EXPOSE 8000
