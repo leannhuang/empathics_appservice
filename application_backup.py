@@ -7,53 +7,90 @@ from CRUD_m import create_data
 from CRUD_m import read_data
 from CRUD_m import close_connection
 from CRUD_m import get_connection
-from CRUD_m import calculate_features
 from process_image import processRequest
-from stacking-model-api import send_request_to_ml
 
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB
 
-@app.route('/health_check', methods = ['GET'])
-def health_check():
-    return 'server is running'
+
+@app.route("/paddle_count", methods = ['POST'])
+def paddle_count():
+    patient_id = request.json['patient_id']
+    device_id = request.json['device_id']
+    connection = get_connection()
+    date_time = datetime.datetime.now()
+    data = {'patient_id':patient_id, 'device_id':device_id, 'medium_count':1, 'time':date_time}
+    table_name = 'pedal'
+    create_data(table_name, data, connection)
+    close_connection(connection)
+    return str(1)
+
+
+@app.route("/register_device", methods = ['POST'])
+def register_device():
+    patient_id = request.json['patient_id']
+    device_id = request.json['device_id']
+    date_time = datetime.datetime.now()
+    connection = get_connection()
+    table_name = 'dp_pair'
+
+    data = {'device_id':device_id}
+    row = read_data(table_name, data)
+    #scenario 2: No such device_id
+    if row is None:
+        return str(2)
+    #scenario 1: Successful
+    elif row.patient_id is None:
+        return str(1)
+        data =  {'patient_id': patient_id}
+        condition = {'device_id': device_id}
+        update_data(table_name, data, condition)
+    #scenario 2: duplicated id
+    else:
+        return str(0)
+
+@app.route('/post_senti_socre', methods = ['POST'])
+def handle_senti_socre_request():
+    # time = request.files['time']
+    sentiment_score = request.json['sentiment_score']
+    # section_ID = request.files['section_ID']
+    # sequence_ID = request.files['sequence_ID']
+    # connection = get_connection()
+    # data = {
+    #     "time": time,
+    #     "sentiment_score": sentiment_score,
+    #     "section_ID":section_ID,
+    #     "sequence_ID":sequence_ID,
+    # }
+    # table_name = 'sentiment_table'
+    # create_data(table_name, data, connection)
+    # close_connection(connection)
+    print(sentiment_score, type(sentiment_score))
+    return str(1)
+# curl --data '{"time":"10","sentiment_score":"20","section_ID":"30","sequence_ID":"40"}' localhose:8000/post_senti_socre
+
+@app.route("/return_device", methods = ['POST'])
+def return_device():
+    patient_id = request.json['patient_id']
+    device_id = request.json['device_id']
+    date_time = datetime.datetime.now()
+    table_name = 'dp_pair'
+    row = read_data(table_name, data)
+    # device has been returned
+    if row.patient_id is None:
+        return str(0)
+    else:
+        data =  {'patient_id': None}
+        condition = {'device_id': device_id}
+        update_data(table_name, data, condition)
 
 @app.route('/get_session_id', methods = ['GET'])
 def get_guid():
     return uuid.uuid4().hex
 
-@app.route('/post_senti_socre', methods = ['POST'])
-def handle_senti_socre_request():
-    section_id = request.json['section_id']
-    seq = request.json['seq']
-    sentiment_score = request.json['sentiment_score']
-    # upadte if record exists
-    table_name = 'transaction_table'
-    row = read_data(table_name, data)
-    if row is None:
-        create_data(table_name, data, connection)
-    else:
-        data =  {'section_id': section_id, 'seq': seq}
-        condition = {'section_id': section_id, 'seq': seq}
-        update_data(table_name, data, condition)
-    close_connection(connection)
-    return str(1)
-
-@app.route('/post_ml', methods = ['POST'])
-def handle_ml():
-    section_id = request.json['section_id']
-    seq = request.json['seq']
-    table_name = 'transaction_table'
-    calculate_features(section_id, seq)
-    features_data =  {'section_id': section_id, 'seq': seq}
-    condition = {'text_senti_avg': text_senti_avg, 'text_senti_std': text_senti_std, 'text_senti_min':text_senti_min, 'text_senti_max':text_senti_max}
-    update_data(table_name, features_data, condition)
-    data = {'section_id':section_id, 'seq':seq }
-    row = read_data(table_name, data)
-    emotion_label = send_request_to_ml(row)
-    close_connection(connection)
-    return emotion_label
-
+@app.route('/health_check', methods = ['GET'])
+def health_check():
+    return 'server is running'
 
 @app.route('/post_pic_test', methods = ['POST'])
 def handle_request_test():
@@ -67,19 +104,25 @@ def handle_request_test():
     headers = dict()
     headers['Ocp-Apim-Subscription-Key'] = _key
     headers['Content-Type'] = 'application/octet-stream'
+
     json = None
     params = {
         'returnFaceId': 'true',
         'returnFaceLandmarks': 'false',
         'returnFaceAttributes': 'age,gender,headPose,smile,facialHair,glasses,emotion,hair,makeup,occlusion,accessories,blur,exposure,noise',
     }
+
     result = processRequest( json, data, headers, params, _url )
+
     if result == []:
         return str(4) # no face
     elif result is None:
         return str(5) # no picture
     firstface_dic = result[0]
+    #print(result[0])
     faceAttributes_dic = firstface_dic['faceAttributes']
+    #print(faceAttributes_dic)
+    #interval = math.ceil(sec/10)
     gender = faceAttributes_dic['gender']
     smile = faceAttributes_dic['smile']
     anger = faceAttributes_dic['emotion']['anger']
@@ -96,16 +139,13 @@ def handle_request_test():
     elif smile > 0.8:
         return str(2) # positive
     else:
-        return str(0) # neutral
+        return str(0) # negative
 
 @app.route('/post_pic', methods = ['GET','POST'])
 def handle_request():
-    #section_id = request.args.get('section_id')
-    #seq = request.args.get('seq')
-    #device_id = request.args.get('device_id')
-    section_id = 'aa80d283431542f5a16adcdac91365ee'
-    seq = 1
-    device_id = 'vuzix_us_1116'
+    section_id = request.args.get('section_id')
+    seq = request.args.get('seq')
+    device_id = request.args.get('device_id')
     imagefile = request.files['image']
     filename = werkzeug.utils.secure_filename(imagefile.filename)
     imagefile.save(filename)
@@ -123,15 +163,21 @@ def handle_request():
         'returnFaceLandmarks': 'false',
         'returnFaceAttributes': 'age,gender,headPose,smile,facialHair,glasses,emotion,hair,makeup,occlusion,accessories,blur,exposure,noise',
     }
+
     result = processRequest( json, data, headers, params, _url )
+
     if result == []:
         return 'no face'
     elif result is None:
         return 'no picture'
     firstface_dic = result[0]
+    #print(result[0])
     faceAttributes_dic = firstface_dic['faceAttributes']
+    #print(faceAttributes_dic)
+    #interval = math.ceil(sec/10)
     smile = faceAttributes_dic['smile']
     gender = faceAttributes_dic['gender']
+    #age = faceAttributes_dic['age']
     anger = faceAttributes_dic['emotion']['anger']
     contempt = faceAttributes_dic['emotion']['contempt']
     disgust = faceAttributes_dic['emotion']['disgust']
@@ -142,7 +188,8 @@ def handle_request():
     surprise = faceAttributes_dic['emotion']['surprise']
     connection = get_connection()
     date_time = datetime.datetime.now()
-    data = {'date':date_time, 'session_id':section_id, 'seq':section_id, 'device_id':device_id, 'gender':gender, 'face_smile':smile, 'face_anger':anger, 'face_contempt':contempt, 'face_disgust':disgust, 'face_fear':fear, 'face_happiness':happiness, 'face_neutral':neutral, 'face_sadness':sadness, 'face_surprise':surprise}
-    table_name = 'transaction_table'
+    data = {'date':date, 'session_id':section_id, 'seq':section_id, 'device_id':device_id, 'face_smile':smile, 'face_anger':anger, 'face_contempt':contempt, 'face_disgust':disgust, 'face_fear':fear, 'face_happiness':happiness, 'face_neutral':neutral, 'face_sadness':sadness, 'face_surprise':surprise}
+    #data = {'face_smile_prob':smile}
+    table_name = 'test'
     create_data(table_name, data, connection)
     close_connection(connection)
