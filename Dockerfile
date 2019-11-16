@@ -47,6 +47,7 @@ RUN mkdir /opt/defaultsite
 COPY hostingstart.html /opt/defaultsite
 COPY application.py /opt/defaultsite
 COPY process_image.py /opt/defaultsite
+COPY stacking_model_api.py /opt/defaultsite
 COPY CRUD_m.py /opt/defaultsite
 ADD odbcinst.ini /etc/
 
