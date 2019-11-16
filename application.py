@@ -9,7 +9,7 @@ from CRUD_m import close_connection
 from CRUD_m import get_connection
 from CRUD_m import calculate_features
 from process_image import processRequest
-from stacking-model-api import send_request_to_ml
+from stacking_model_api import send_request_to_ml
 
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB
