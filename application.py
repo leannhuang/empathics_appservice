@@ -30,7 +30,9 @@ def handle_senti_socre_request():
     sentiment_score = request.json['sentiment_score']
     # upadte if record exists
     table_name = 'transaction_table'
-    row = read_data(table_name, data)
+    data = {'section_id':section_id, 'seq':seq, 'sentiment_score':sentiment_score}
+    read_data = {'section_id':section_id, 'seq':seq}
+    row = read_data(table_name, read_data)
     if row is None:
         create_data(table_name, data, connection)
     else:
