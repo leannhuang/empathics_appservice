@@ -25,19 +25,18 @@ def get_guid():
 
 @app.route('/post_senti_socre', methods = ['POST'])
 def handle_senti_socre_request():
-    section_id = request.json['section_id']
+    session_id = request.json['session_id']
     seq = request.json['seq']
     sentiment_score = request.json['sentiment_score']
     # upadte if record exists
     table_name = 'transaction_table'
-    data = {'section_id':section_id, 'seq':seq, 'sentiment_score':sentiment_score}
-    read_data = {'section_id':section_id, 'seq':seq}
+    data = {'session_id':session_id, 'seq':seq, 'sentiment_score':sentiment_score}
+    read_data = {'session_id':session_id, 'seq':seq}
     row = read_data(table_name, read_data)
     if row is None:
         create_data(table_name, data, connection)
     else:
-        data =  {'section_id': section_id, 'seq': seq}
-        condition = {'section_id': section_id, 'seq': seq}
+        condition = {'session_id': session_id, 'seq': seq}
         update_data(table_name, data, condition)
     close_connection(connection)
     return str(1)
