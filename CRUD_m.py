@@ -110,7 +110,7 @@ def update_data(table_name, data, condition_id):
 def calculate_features(table_name, session_id, seq):
     connection = get_connection()
     cursor = connection.cursor()
-    sql_query = "SELECT AVG(text_senti_score) as text_senti_avg, STDEV(text_senti_score) as [text_senti_std], MIN(text_senti_score) as [text_senti_min], MAX(text_senti_score) as [text_senti_max] FROM transaction_table where seq="+seq +"and session_id ="+session_id
+    sql_query = "SELECT AVG(text_senti_score) as text_senti_avg, STDEV(text_senti_score) as [text_senti_std], MIN(text_senti_score) as [text_senti_min], MAX(text_senti_score) as [text_senti_max] FROM transaction_table where seq="+seq +"and session_id ='"+session_id+"'"
     result = cursor.execute(sql_query)
     for row in result:
         text_senti_avg = row[0]
