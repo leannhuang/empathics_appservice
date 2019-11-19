@@ -44,7 +44,7 @@ def handle_senti_socre_request():
 
 @app.route('/post_ml', methods = ['POST'])
 def handle_ml():
-    section_id = request.json['section_id']
+    session_id = request.json['session_id']
     seq = request.json['seq']
     table_name = 'transaction_table'
     text_senti_avg, text_senti_std, text_senti_min, text_senti_max = calculate_features(table_name, session_id, seq)
@@ -147,3 +147,4 @@ def handle_request():
     table_name = 'transaction_table'
     insert_data(table_name, data, connection)
     close_connection(connection)
+    return str(1)

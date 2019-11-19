@@ -76,10 +76,9 @@ def read_data(table_name, data):
             sql_query = sql_query + " and " + key + " = " + "'" +value+ "'"
     # Execute the sql query
     result = cursor.execute(sql_query)
-    result = cursor.execute(sql_query)
     rows= cursor.fetchall()
     number_rows = len(rows)
-    return result, number_rows
+    return rows, number_rows
 
 def update_data(table_name, data, condition_id):
     # Get the sql connection
@@ -111,13 +110,11 @@ def update_data(table_name, data, condition_id):
 def calculate_features(table_name, data, connection):
     connection = get_connection()
     cursor = connection.cursor()
-    sql_query = "Insert Into " + table_name + " Values("+sql_query+")"
-    cursor = connection.cursor()
     sql_query = "SELECT AVG(text_senti_score) as text_senti_avg, STDEV(text_senti_score) as [text_senti_std], MIN(text_senti_score) as [text_senti_min], MAX(text_senti_score) as [text_senti_max] FROM transaction_table where seq="+seq +"and session_id ="+session_id
     result = cursor.execute(sql_query)
-    connection.commit()
-    text_senti_avg = result.text_senti_avg
-    text_senti_std = result.text_senti_std
-    text_senti_min = result.text_senti_min
-    text_senti_max = result.text_senti_max
+    for row in result:
+        text_senti_avg = result.text_senti_avg
+        text_senti_std = result.text_senti_std
+        text_senti_min = result.text_senti_min
+        text_senti_max = result.text_senti_max
     return avg, std, min, max

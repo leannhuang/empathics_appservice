@@ -1,22 +1,22 @@
 import urllib.request
 import json
 
-def send_request_to_ml(row):
-    smile = row[4]
-    #gender = row[1]
-    anger = row[5]
-    comtempt = row[6]
-    disgust = row[7]
-    fear = row[8]
-    happiness = row[9]
-    neutral = row[10]
-    sadness = row[11]
-    surprise = row[12]
-    score_val = row[13]
-    score_std = row[14]
-    score_min = row[15]
-    score_max = row[16]
-    score_avg = row[17]
+def send_request_to_ml(rows):
+    for row in rows:
+        smile = row[4]
+        anger = row[5]
+        comtempt = row[6]
+        disgust = row[7]
+        fear = row[8]
+        happiness = row[9]
+        neutral = row[10]
+        sadness = row[11]
+        surprise = row[12]
+        score_val = row[13]
+        score_std = row[14]
+        score_min = row[15]
+        score_max = row[16]
+        score_avg = row[17]
     data =  {
 
             "Inputs": {
@@ -41,11 +41,11 @@ def send_request_to_ml(row):
     try:
         response = urllib.request.urlopen(req)
         result = response.read()
-        neutral_probability = result["Results"]["output1"][ "value"]["Values"][0]
-        negative_probability = result["Results"]["output1"][ "value"]["Values"][1]
-        positive_probability = result["Results"]["output1"][ "value"]["Values"][2]
-        label = result["Results"]["output1"][ "value"]["Values"][3]
-        print(result)
+        api_result = json.loads(result)
+        neutral_probability  = api_result["Results"]["output1"]["value"]["Values"][0][0]
+        negative_probability  = api_result["Results"]["output1"]["value"]["Values"][0][1]
+        positive_probability  = api_result["Results"]["output1"]["value"]["Values"][0][2]
+        label  = api_result["Results"]["output1"]["value"]["Values"][0][3]
         return label
 
     except urllib.error.HTTPError as error:
