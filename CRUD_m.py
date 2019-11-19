@@ -106,7 +106,7 @@ def update_data(table_name, data, condition_id):
     cursor.execute(sql_query, value_list)
     connection.commit()
     print('Data Updated Successfully')
-
+    return connection
 
 def calculate_features(table_name, data, connection):
     connection = get_connection()

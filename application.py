@@ -6,6 +6,7 @@ import uuid
 from CRUD_m import insert_data
 from CRUD_m import create_data
 from CRUD_m import read_data
+from CRUD_m import update_data
 from CRUD_m import close_connection
 from CRUD_m import get_connection
 from CRUD_m import calculate_features
@@ -27,7 +28,7 @@ def get_guid():
 def handle_senti_socre_request():
     session_id = request.json['session_id']
     seq = request.json['seq']
-    sentiment_score = request.json['sentiment_score']
+    text_senti_score = request.json['sentiment_score']
     # upadte if record exists
     table_name = 'transaction_table'
     data = {'session_id':session_id, 'seq':seq, 'text_senti_score':text_senti_score}
@@ -37,8 +38,8 @@ def handle_senti_socre_request():
         insert_data(table_name, data, connection)
     else:
         condition = {'session_id': session_id, 'seq': seq}
-        update_data(table_name, data, condition)
-    close_connection(connection)
+        connection = update_data(table_name, data, condition)
+        close_connection(connection)
     return str(1)
 
 @app.route('/post_ml', methods = ['POST'])
