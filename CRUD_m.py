@@ -113,8 +113,8 @@ def calculate_features(table_name, data, connection):
     sql_query = "SELECT AVG(text_senti_score) as text_senti_avg, STDEV(text_senti_score) as [text_senti_std], MIN(text_senti_score) as [text_senti_min], MAX(text_senti_score) as [text_senti_max] FROM transaction_table where seq="+seq +"and session_id ="+session_id
     result = cursor.execute(sql_query)
     for row in result:
-        text_senti_avg = result.text_senti_avg
-        text_senti_std = result.text_senti_std
-        text_senti_min = result.text_senti_min
-        text_senti_max = result.text_senti_max
+        text_senti_avg = row[0]
+        text_senti_std = row[1]
+        text_senti_min = row[2]
+        text_senti_max = row[3]
     return avg, std, min, max
