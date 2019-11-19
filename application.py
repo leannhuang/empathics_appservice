@@ -30,11 +30,11 @@ def handle_senti_socre_request():
     sentiment_score = request.json['sentiment_score']
     # upadte if record exists
     table_name = 'transaction_table'
-    data = {'session_id':session_id, 'seq':seq, 'sentiment_score':sentiment_score}
-    read_data = {'session_id':session_id, 'seq':seq}
-    row = read_data(table_name, read_data)
-    if row is None:
-        create_data(table_name, data, connection)
+    data = {'session_id':session_id, 'seq':seq, 'text_senti_score':text_senti_score}
+    r_data = {'session_id':session_id, 'seq':seq}
+    row, number_rows = read_data(table_name, r_data)
+    if number_rows == 0:
+        insert_data(table_name, data, connection)
     else:
         condition = {'session_id': session_id, 'seq': seq}
         update_data(table_name, data, condition)
@@ -46,16 +46,14 @@ def handle_ml():
     section_id = request.json['section_id']
     seq = request.json['seq']
     table_name = 'transaction_table'
-    calculate_features(section_id, seq)
-    features_data =  {'section_id': section_id, 'seq': seq}
-    condition = {'text_senti_avg': text_senti_avg, 'text_senti_std': text_senti_std, 'text_senti_min':text_senti_min, 'text_senti_max':text_senti_max}
+    text_senti_avg, text_senti_std, text_senti_min, text_senti_max = calculate_features(table_name, session_id, seq)
+    condition =  {'session_id': session_id, 'seq': seq}
+    features_data = {'text_senti_avg': text_senti_avg, 'text_senti_std': text_senti_std, 'text_senti_min':text_senti_min, 'text_senti_max':text_senti_max}
     update_data(table_name, features_data, condition)
-    data = {'section_id':section_id, 'seq':seq }
-    row = read_data(table_name, data)
-    emotion_label = send_request_to_ml(row)
-    close_connection(connection)
+    data = {'session_id':session_id, 'seq':seq }
+    result, number_rows = read_data(table_name, data)
+    emotion_label = send_request_to_ml(result)
     return emotion_label
-
 
 @app.route('/post_pic_test', methods = ['POST'])
 def handle_request_test():
@@ -105,7 +103,7 @@ def handle_request():
     #section_id = request.args.get('section_id')
     #seq = request.args.get('seq')
     #device_id = request.args.get('device_id')
-    section_id = 'aa80d283431542f5a16adcdac91365ee'
+    session_id = 'aa80d283431542f5a16adcdac91365ee'
     seq = 1
     device_id = 'vuzix_us_1116'
     imagefile = request.files['image']
@@ -144,7 +142,7 @@ def handle_request():
     surprise = faceAttributes_dic['emotion']['surprise']
     connection = get_connection()
     date_time = datetime.datetime.now()
-    data = {'date':date_time, 'session_id':section_id, 'seq':section_id, 'device_id':device_id, 'gender':gender, 'face_smile':smile, 'face_anger':anger, 'face_contempt':contempt, 'face_disgust':disgust, 'face_fear':fear, 'face_happiness':happiness, 'face_neutral':neutral, 'face_sadness':sadness, 'face_surprise':surprise}
+    data = {'date':date_time, 'session_id':session_id, 'seq':seq, 'device_id':device_id, 'gender':gender, 'face_smile':smile, 'face_anger':anger, 'face_contempt':contempt, 'face_disgust':disgust, 'face_fear':fear, 'face_happiness':happiness, 'face_neutral':neutral, 'face_sadness':sadness, 'face_surprise':surprise}
     table_name = 'transaction_table'
     insert_data(table_name, data, connection)
     close_connection(connection)

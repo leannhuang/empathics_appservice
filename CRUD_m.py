@@ -76,12 +76,10 @@ def read_data(table_name, data):
             sql_query = sql_query + " and " + key + " = " + "'" +value+ "'"
     # Execute the sql query
     result = cursor.execute(sql_query)
-    #print('Data Read')
-    # Print the data
-    # for row in result:
-    #     print('row = %r' % (row,))
-    return result
-
+    result = cursor.execute(sql_query)
+    rows= cursor.fetchall()
+    number_rows = len(rows)
+    return result, number_rows
 
 def update_data(table_name, data, condition_id):
     # Get the sql connection

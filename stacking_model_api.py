@@ -2,21 +2,21 @@ import urllib.request
 import json
 
 def send_request_to_ml(row):
-    smile = row.face_smile
-    gender = row.gender
-    anger = row.face_anger
-    comtempt = row.face_contempt
-    disgust = row.face_disgust
-    fear = row.face_fear
-    happiness = row.face_happiness
-    neutral = row.face_neutral
-    sadness = row.face_surprise
-    surprise = row.face_surprise
-    score_val = row.score_val
-    score_std = row.score_std
-    score_min = row.score_min
-    score_max = row.score_max
-    score_avg = row.score_avg
+    smile = row[0]
+    gender = row[1]
+    anger = row[2]
+    comtempt = row[3]
+    disgust = row[4]
+    fear = row[5]
+    happiness = row[6]
+    neutral = row[7]
+    sadness = row[8]
+    surprise = row[9]
+    score_val = row[10]
+    score_std = row[11]
+    score_min = row[12]
+    score_max = row[13]
+    score_avg = row[14]
     data =  {
 
             "Inputs": {
