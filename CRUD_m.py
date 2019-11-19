@@ -117,4 +117,4 @@ def calculate_features(table_name, data, connection):
         text_senti_std = row[1]
         text_senti_min = row[2]
         text_senti_max = row[3]
-    return avg, std, min, max
+    return text_senti_avg, text_senti_std, text_senti_min, text_senti_max

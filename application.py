@@ -52,8 +52,8 @@ def handle_ml():
     features_data = {'text_senti_avg': text_senti_avg, 'text_senti_std': text_senti_std, 'text_senti_min':text_senti_min, 'text_senti_max':text_senti_max}
     update_data(table_name, features_data, condition)
     data = {'session_id':session_id, 'seq':seq }
-    result, number_rows = read_data(table_name, data)
-    emotion_label = send_request_to_ml(result)
+    rows, number_rows = read_data(table_name, data)
+    emotion_label = send_request_to_ml(rows)
     return emotion_label
 
 @app.route('/post_pic_test', methods = ['POST'])
