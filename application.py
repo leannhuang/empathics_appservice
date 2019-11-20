@@ -101,13 +101,13 @@ def handle_request():
     }
     result = processRequest( json, data, headers, params, _url )
     if result == []:
-        return 'no face'
+        return str(4)
     elif result is None:
-        return 'no picture'
+        return str(5)
     firstface_dic = result[0]
     faceAttributes_dic = firstface_dic['faceAttributes']
     smile = faceAttributes_dic['smile']
-    gender = faceAttributes_dic['gender']
+    #gender = faceAttributes_dic['gender']
     anger = faceAttributes_dic['emotion']['anger']
     contempt = faceAttributes_dic['emotion']['contempt']
     disgust = faceAttributes_dic['emotion']['disgust']
@@ -118,7 +118,7 @@ def handle_request():
     surprise = faceAttributes_dic['emotion']['surprise']
     connection = get_connection()
     date_time = datetime.datetime.now()
-    data = {'date':date_time, 'session_id':session_id, 'seq':seq, 'device_id':device_id, 'gender':gender, 'face_smile':smile, 'face_anger':anger, 'face_contempt':contempt, 'face_disgust':disgust, 'face_fear':fear, 'face_happiness':happiness, 'face_neutral':neutral, 'face_sadness':sadness, 'face_surprise':surprise}
+    data = {'date':date_time, 'session_id':session_id, 'seq':seq, 'device_id':device_id, 'face_smile':smile, 'face_anger':anger, 'face_contempt':contempt, 'face_disgust':disgust, 'face_fear':fear, 'face_happiness':happiness, 'face_neutral':neutral, 'face_sadness':sadness, 'face_surprise':surprise}
     table_name = 'transaction_table'
     insert_data(table_name, data, connection)
     close_connection(connection)
