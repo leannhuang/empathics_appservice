@@ -39,7 +39,7 @@ def handle_senti_score_request():
         connection = insert_data(table_name, data, connection)
     else:
         condition = {'session_id': session_id, 'seq': seq}
-        connection = update_data(table_name, data, condition)
+        connection = update_data(table_name, data, condition, connection)
     close_connection(connection)
     return str(1)
 
