@@ -33,14 +33,14 @@ def handle_senti_score_request():
     table_name = 'transaction_table'
     data = {'session_id':session_id, 'seq':seq, 'text_senti_score':text_senti_score}
     r_data = {'session_id':session_id, 'seq':seq}
-    row, number_rows = read_data(table_name, r_data)
+    connection = get_connection()
+    row, number_rows = read_data(table_name, r_data, connection)
     if number_rows == 0:
         connection = insert_data(table_name, data, connection)
-        close_connection(connection)
     else:
         condition = {'session_id': session_id, 'seq': seq}
         connection = update_data(table_name, data, condition)
-        close_connection(connection)
+    close_connection(connection)
     return str(1)
 
 @app.route('/post_ml', methods = ['POST'])
@@ -48,13 +48,15 @@ def handle_ml():
     session_id = request.json['session_id']
     seq = request.json['seq']
     table_name = 'transaction_table'
-    text_senti_avg, text_senti_std, text_senti_min, text_senti_max = calculate_features(table_name, session_id, seq)
+    connection = get_connection()
+    text_senti_avg, text_senti_std, text_senti_min, text_senti_max = calculate_features(table_name, session_id, seq, connection)
     condition =  {'session_id': session_id, 'seq': seq}
     features_data = {'text_senti_avg': text_senti_avg, 'text_senti_std': text_senti_std, 'text_senti_min':text_senti_min, 'text_senti_max':text_senti_max}
-    update_data(table_name, features_data, condition)
+    update_data(table_name, features_data, condition, connection)
     data = {'session_id':session_id, 'seq':seq }
-    rows, number_rows = read_data(table_name, data)
+    rows, number_rows = read_data(table_name, data, connection)
     emotion_label = send_request_to_ml(rows)
+    close_connection(connection)
     return emotion_label
 
 
@@ -65,14 +67,16 @@ def handle_audio():
     audioefile.save(filename)
     session_id = request.json['session_id']
     seq = request.json['seq']
+    connection = get_connection()
     table_name = 'transaction_table'
-    text_senti_avg, text_senti_std, text_senti_min, text_senti_max = calculate_features(table_name, session_id, seq)
+    text_senti_avg, text_senti_std, text_senti_min, text_senti_max = calculate_features(table_name, session_id, seq, connection)
     condition =  {'session_id': session_id, 'seq': seq}
     features_data = {'text_senti_avg': text_senti_avg, 'text_senti_std': text_senti_std, 'text_senti_min':text_senti_min, 'text_senti_max':text_senti_max}
-    update_data(table_name, features_data, condition)
+    update_data(table_name, features_data, condition, connection)
     data = {'session_id':session_id, 'seq':seq }
-    rows, number_rows = read_data(table_name, data)
+    rows, number_rows = read_data(table_name, data, connection)
     emotion_label = send_request_to_ml(rows)
+    close_connection(connection)
     return emotion_label
 
 @app.route('/post_pic', methods = ['GET','POST'])
@@ -101,35 +105,32 @@ def handle_request():
         'returnFaceAttributes': 'age,gender,headPose,smile,facialHair,glasses,emotion,hair,makeup,occlusion,accessories,blur,exposure,noise',
     }
     result = processRequest( json, data, headers, params, _url )
+    connection = get_connection()
     if result == []:
-        connection = get_connection()
         date_time = datetime.datetime.now()
         data = {'date':date_time, 'session_id':session_id, 'seq':seq, 'device_id':device_id, 'face_smile':0, 'face_anger':0, 'face_contempt':0, 'face_disgust':0, 'face_fear':0, 'face_happiness':0, 'face_neutral':0, 'face_sadness':0, 'face_surprise':0}
         table_name = 'transaction_table'
         r_data = {'session_id':session_id, 'seq':seq}
-        row, number_rows = read_data(table_name, r_data)
+        row, number_rows = read_data(table_name, r_data, connection)
         if number_rows == 0:
             connection = insert_data(table_name, data, connection)
-            close_connection(connection)
         else:
             condition = {'session_id': session_id, 'seq': seq}
-            connection = update_data(table_name, data, condition)
-            close_connection(connection)
+            connection = update_data(table_name, data, condition, connection)
+        close_connection(connection)
         return str(4)
     elif result is None:
-        connection = get_connection()
         date_time = datetime.datetime.now()
         data = {'date':date_time, 'session_id':session_id, 'seq':seq, 'device_id':device_id, 'face_smile':0, 'face_anger':0, 'face_contempt':0, 'face_disgust':0, 'face_fear':0, 'face_happiness':0, 'face_neutral':0, 'face_sadness':0, 'face_surprise':0}
         table_name = 'transaction_table'
         r_data = {'session_id':session_id, 'seq':seq}
-        row, number_rows = read_data(table_name, r_data)
+        row, number_rows = read_data(table_name, r_data, connection)
         if number_rows == 0:
             connection = insert_data(table_name, data, connection)
-            close_connection(connection)
         else:
             condition = {'session_id': session_id, 'seq': seq}
-            connection = update_data(table_name, data, condition)
-            close_connection(connection)
+            connection = update_data(table_name, data, condition, connection)
+        close_connection(connection)
         return str(5)
 
     firstface_dic = result[0]
@@ -148,7 +149,7 @@ def handle_request():
     date_time = datetime.datetime.now()
     data = {'date':date_time, 'session_id':session_id, 'seq':seq, 'device_id':device_id, 'face_smile':smile, 'face_anger':anger, 'face_contempt':contempt, 'face_disgust':disgust, 'face_fear':fear, 'face_happiness':happiness, 'face_neutral':neutral, 'face_sadness':sadness, 'face_surprise':surprise}
     table_name = 'transaction_table'
-    connection = insert_data(table_name, data, connection)
+    connection = insert_data(table_name, data, connection, connection)
     close_connection(connection)
     return str(1)
 

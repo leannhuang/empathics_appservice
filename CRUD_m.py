@@ -62,9 +62,8 @@ def insert_data(table_name, data, connection):
     cursor.execute(sql_query, value_list)
     return connection
 
-def read_data(table_name, data):
+def read_data(table_name, data, connection):
     # Get the sql connection
-    connection = get_connection()
     cursor = connection.cursor()
 
     sql_query = "select * from " + table_name
@@ -78,10 +77,9 @@ def read_data(table_name, data):
     number_rows = len(rows)
     return rows, number_rows
 
-def update_data(table_name, data, condition_id):
+def update_data(table_name, data, condition_id, connection):
     # Get the sql connection
     value_list = []
-    connection = get_connection()
     cursor = connection.cursor()
 
     sql_query = "Update " + table_name + " Set "
@@ -104,8 +102,7 @@ def update_data(table_name, data, condition_id):
     connection.commit()
     return connection
 
-def calculate_features(table_name, session_id, seq):
-    connection = get_connection()
+def calculate_features(table_name, session_id, seq, connection):
     cursor = connection.cursor()
     sql_query = "SELECT AVG(text_senti_score) as text_senti_avg, STDEV(text_senti_score) as [text_senti_std], MIN(text_senti_score) as [text_senti_min], MAX(text_senti_score) as [text_senti_max] FROM transaction_table where seq="+seq +"and session_id ='"+session_id+"'"
     result = cursor.execute(sql_query)
