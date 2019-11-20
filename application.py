@@ -35,7 +35,7 @@ def handle_senti_score_request():
     r_data = {'session_id':session_id, 'seq':seq}
     row, number_rows = read_data(table_name, r_data)
     if number_rows == 0:
-        insert_data(table_name, data, connection)
+        insert_data(table_name, data)
     else:
         condition = {'session_id': session_id, 'seq': seq}
         connection = update_data(table_name, data, condition)

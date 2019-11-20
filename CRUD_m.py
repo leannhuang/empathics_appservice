@@ -61,7 +61,7 @@ def insert_data(table_name, data, connection):
          value_list.append(data[key])
     cursor.execute(sql_query, value_list)
     connection.commit()
-    return connection
+    return str(1)
 
 
 def read_data(table_name, data):
