@@ -56,6 +56,8 @@ def handle_ml():
     data = {'session_id':session_id, 'seq':seq }
     rows, number_rows = read_data(table_name, data, connection)
     emotion_label = send_request_to_ml(rows)
+    features_data = {'result':emotion_label}
+    update_data(table_name, features_data, condition, connection)
     close_connection(connection)
     return emotion_label
 
@@ -152,6 +154,86 @@ def handle_request():
     connection = insert_data(table_name, data, connection, connection)
     close_connection(connection)
     return str(1)
+
+@app.route('/post_pic_1', methods = ['GET','POST'])
+def handle_request():
+    aggregation_result = request.args.get('json')
+    # seq = request.args.get('seq')
+    # device_id = request.args.get('device_id')
+    api_result = json.loads(result)
+    seq  = api_result["seq"]
+    device_id  = api_result["device_id"]
+    session_id  = api_result["session_id"]
+    # session_id = 'aa80d283431542f5a16adcdac91365ex'
+    # seq = '1'
+    # device_id = 'vuzix_us_1116'
+    imagefile = request.files['image']
+    filename = werkzeug.utils.secure_filename(imagefile.filename)
+    imagefile.save(filename)
+    with open(filename, 'rb' ) as f:
+        data = f.read()
+    _url = 'https://westus2.api.cognitive.microsoft.com/face/v1.0/detect'
+    _key = 'bc027dc227484433a77d7b613807d230' #Here you have to paste your primary key
+    headers = dict()
+    headers['Ocp-Apim-Subscription-Key'] = _key
+    headers['Content-Type'] = 'application/octet-stream'
+
+    json = None
+    params = {
+        'returnFaceId': 'true',
+        'returnFaceLandmarks': 'false',
+        'returnFaceAttributes': 'age,gender,headPose,smile,facialHair,glasses,emotion,hair,makeup,occlusion,accessories,blur,exposure,noise',
+    }
+    result = processRequest( json, data, headers, params, _url )
+    connection = get_connection()
+    if result == []:
+        date_time = datetime.datetime.now()
+        data = {'date':date_time, 'session_id':session_id, 'seq':seq, 'device_id':device_id, 'face_smile':0, 'face_anger':0, 'face_contempt':0, 'face_disgust':0, 'face_fear':0, 'face_happiness':0, 'face_neutral':0, 'face_sadness':0, 'face_surprise':0}
+        table_name = 'transaction_table'
+        r_data = {'session_id':session_id, 'seq':seq}
+        row, number_rows = read_data(table_name, r_data, connection)
+        if number_rows == 0:
+            connection = insert_data(table_name, data, connection)
+        else:
+            condition = {'session_id': session_id, 'seq': seq}
+            connection = update_data(table_name, data, condition, connection)
+        close_connection(connection)
+        return str(4)
+    elif result is None:
+        date_time = datetime.datetime.now()
+        data = {'date':date_time, 'session_id':session_id, 'seq':seq, 'device_id':device_id, 'face_smile':0, 'face_anger':0, 'face_contempt':0, 'face_disgust':0, 'face_fear':0, 'face_happiness':0, 'face_neutral':0, 'face_sadness':0, 'face_surprise':0}
+        table_name = 'transaction_table'
+        r_data = {'session_id':session_id, 'seq':seq}
+        row, number_rows = read_data(table_name, r_data, connection)
+        if number_rows == 0:
+            connection = insert_data(table_name, data, connection)
+        else:
+            condition = {'session_id': session_id, 'seq': seq}
+            connection = update_data(table_name, data, condition, connection)
+        close_connection(connection)
+        return str(5)
+
+    firstface_dic = result[0]
+    faceAttributes_dic = firstface_dic['faceAttributes']
+    smile = faceAttributes_dic['smile']
+    #gender = faceAttributes_dic['gender']
+    anger = faceAttributes_dic['emotion']['anger']
+    contempt = faceAttributes_dic['emotion']['contempt']
+    disgust = faceAttributes_dic['emotion']['disgust']
+    fear = faceAttributes_dic['emotion']['fear']
+    happiness = faceAttributes_dic['emotion']['happiness']
+    neutral = faceAttributes_dic['emotion']['neutral']
+    sadness = faceAttributes_dic['emotion']['sadness']
+    surprise = faceAttributes_dic['emotion']['surprise']
+    connection = get_connection()
+    date_time = datetime.datetime.now()
+    data = {'date':date_time, 'session_id':session_id, 'seq':seq, 'device_id':device_id, 'face_smile':smile, 'face_anger':anger, 'face_contempt':contempt, 'face_disgust':disgust, 'face_fear':fear, 'face_happiness':happiness, 'face_neutral':neutral, 'face_sadness':sadness, 'face_surprise':surprise}
+    table_name = 'transaction_table'
+    connection = insert_data(table_name, data, connection, connection)
+    close_connection(connection)
+    return str(1)
+
+
 
 @app.route('/post_pic_test', methods = ['POST'])
 def handle_request_test():
