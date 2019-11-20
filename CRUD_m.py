@@ -41,7 +41,7 @@ def create_data(table_name, data, connection):
     return connection
 
 
-def insert_data(table_name, data):
+def insert_data(table_name, data, connection):
     str = ""
     str_col = ""
     value_list = []
@@ -60,8 +60,7 @@ def insert_data(table_name, data):
     for key in data:
          value_list.append(data[key])
     cursor.execute(sql_query, value_list)
-    return str(1)
-
+    return connection
 
 def read_data(table_name, data):
     # Get the sql connection

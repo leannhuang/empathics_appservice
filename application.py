@@ -35,7 +35,8 @@ def handle_senti_score_request():
     r_data = {'session_id':session_id, 'seq':seq}
     row, number_rows = read_data(table_name, r_data)
     if number_rows == 0:
-        insert_data(table_name, data)
+        connection = insert_data(table_name, data, connection)
+        close_connection(connection)
     else:
         condition = {'session_id': session_id, 'seq': seq}
         connection = update_data(table_name, data, condition)
@@ -108,7 +109,8 @@ def handle_request():
         r_data = {'session_id':session_id, 'seq':seq}
         row, number_rows = read_data(table_name, r_data)
         if number_rows == 0:
-            insert_data(table_name, data)
+            connection = insert_data(table_name, data, connection)
+            close_connection(connection)
         else:
             condition = {'session_id': session_id, 'seq': seq}
             connection = update_data(table_name, data, condition)
@@ -122,7 +124,8 @@ def handle_request():
         r_data = {'session_id':session_id, 'seq':seq}
         row, number_rows = read_data(table_name, r_data)
         if number_rows == 0:
-            insert_data(table_name, data)
+            connection = insert_data(table_name, data, connection)
+            close_connection(connection)
         else:
             condition = {'session_id': session_id, 'seq': seq}
             connection = update_data(table_name, data, condition)
@@ -145,7 +148,7 @@ def handle_request():
     date_time = datetime.datetime.now()
     data = {'date':date_time, 'session_id':session_id, 'seq':seq, 'device_id':device_id, 'face_smile':smile, 'face_anger':anger, 'face_contempt':contempt, 'face_disgust':disgust, 'face_fear':fear, 'face_happiness':happiness, 'face_neutral':neutral, 'face_sadness':sadness, 'face_surprise':surprise}
     table_name = 'transaction_table'
-    insert_data(table_name, data)
+    connection = insert_data(table_name, data, connection)
     close_connection(connection)
     return str(1)
 
