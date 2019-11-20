@@ -101,9 +101,34 @@ def handle_request():
     }
     result = processRequest( json, data, headers, params, _url )
     if result == []:
+        connection = get_connection()
+        date_time = datetime.datetime.now()
+        data = {'date':date_time, 'session_id':session_id, 'seq':seq, 'device_id':device_id, 'face_smile':0, 'face_anger':0, 'face_contempt':0, 'face_disgust':0, 'face_fear':0, 'face_happiness':0, 'face_neutral':0, 'face_sadness':0, 'face_surprise':0}
+        table_name = 'transaction_table'
+        r_data = {'session_id':session_id, 'seq':seq}
+        row, number_rows = read_data(table_name, r_data)
+        if number_rows == 0:
+            insert_data(table_name, data)
+        else:
+            condition = {'session_id': session_id, 'seq': seq}
+            connection = update_data(table_name, data, condition)
+            close_connection(connection)
         return str(4)
     elif result is None:
+        connection = get_connection()
+        date_time = datetime.datetime.now()
+        data = {'date':date_time, 'session_id':session_id, 'seq':seq, 'device_id':device_id, 'face_smile':0, 'face_anger':0, 'face_contempt':0, 'face_disgust':0, 'face_fear':0, 'face_happiness':0, 'face_neutral':0, 'face_sadness':0, 'face_surprise':0}
+        table_name = 'transaction_table'
+        r_data = {'session_id':session_id, 'seq':seq}
+        row, number_rows = read_data(table_name, r_data)
+        if number_rows == 0:
+            insert_data(table_name, data)
+        else:
+            condition = {'session_id': session_id, 'seq': seq}
+            connection = update_data(table_name, data, condition)
+            close_connection(connection)
         return str(5)
+
     firstface_dic = result[0]
     faceAttributes_dic = firstface_dic['faceAttributes']
     smile = faceAttributes_dic['smile']
