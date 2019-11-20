@@ -80,7 +80,7 @@ def handle_request():
     # seq = request.args.get('seq')
     # device_id = request.args.get('device_id')
     session_id = 'aa80d283431542f5a16adcdac91365ee'
-    seq = 1
+    seq = '1'
     device_id = 'vuzix_us_1116'
     imagefile = request.files['image']
     filename = werkzeug.utils.secure_filename(imagefile.filename)
@@ -103,7 +103,7 @@ def handle_request():
     if result == []:
         connection = get_connection()
         date_time = datetime.datetime.now()
-        data = {'date':date_time, 'session_id':session_id, 'seq':seq, 'device_id':device_id, 'face_smile':str(0), 'face_anger':str(0), 'face_contempt':str(0), 'face_disgust':str(0), 'face_fear':str(0), 'face_happiness':str(0), 'face_neutral':str(0), 'face_sadness':str(0), 'face_surprise':str(0)}
+        data = {'date':date_time, 'session_id':session_id, 'seq':seq, 'device_id':device_id, 'face_smile':0, 'face_anger':0, 'face_contempt':0, 'face_disgust':0, 'face_fear':0, 'face_happiness':0, 'face_neutral':0, 'face_sadness':0, 'face_surprise':0}
         table_name = 'transaction_table'
         r_data = {'session_id':session_id, 'seq':seq}
         row, number_rows = read_data(table_name, r_data)
@@ -117,7 +117,7 @@ def handle_request():
     elif result is None:
         connection = get_connection()
         date_time = datetime.datetime.now()
-        data = {'date':date_time, 'session_id':session_id, 'seq':seq, 'device_id':device_id, 'face_smile':str(0), 'face_anger':str(0), 'face_contempt':str(0), 'face_disgust':str(0), 'face_fear':str(0), 'face_happiness':str(0), 'face_neutral':str(0), 'face_sadness':str(0), 'face_surprise':str(0)}
+        data = {'date':date_time, 'session_id':session_id, 'seq':seq, 'device_id':device_id, 'face_smile':0, 'face_anger':0, 'face_contempt':0, 'face_disgust':0, 'face_fear':0, 'face_happiness':0, 'face_neutral':0, 'face_sadness':0, 'face_surprise':0}
         table_name = 'transaction_table'
         r_data = {'session_id':session_id, 'seq':seq}
         row, number_rows = read_data(table_name, r_data)
