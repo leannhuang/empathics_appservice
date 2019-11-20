@@ -79,7 +79,7 @@ def handle_request():
     # section_id = request.args.get('section_id')
     # seq = request.args.get('seq')
     # device_id = request.args.get('device_id')
-    session_id = 'aa80d283431542f5a16adcdac91365ee'
+    session_id = 'aa80d283431542f5a16adcdac91365ex'
     seq = '1'
     device_id = 'vuzix_us_1116'
     imagefile = request.files['image']
