@@ -60,6 +60,7 @@ def insert_data(table_name, data, connection):
     for key in data:
          value_list.append(data[key])
     cursor.execute(sql_query, value_list)
+    connection.commit()
     return connection
 
 def read_data(table_name, data, connection):
