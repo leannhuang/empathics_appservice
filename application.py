@@ -160,7 +160,7 @@ def handle_request():
     aggregation_result = request.args.get('json')
     # seq = request.args.get('seq')
     # device_id = request.args.get('device_id')
-    api_result = json.loads(result)
+    api_result = json.loads(aggregation_result)
     seq  = api_result["seq"]
     device_id  = api_result["device_id"]
     session_id  = api_result["session_id"]
