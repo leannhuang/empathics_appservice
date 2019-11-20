@@ -56,6 +56,74 @@ def handle_ml():
     emotion_label = send_request_to_ml(rows)
     return emotion_label
 
+
+@app.route('/post_audio', methods = ['POST'])
+def handle_audio():
+    audioefile = request.files['audio']
+    filename = werkzeug.utils.secure_filename(audiofile.filename)
+    audioefile.save(filename)
+    session_id = request.json['session_id']
+    seq = request.json['seq']
+    table_name = 'transaction_table'
+    text_senti_avg, text_senti_std, text_senti_min, text_senti_max = calculate_features(table_name, session_id, seq)
+    condition =  {'session_id': session_id, 'seq': seq}
+    features_data = {'text_senti_avg': text_senti_avg, 'text_senti_std': text_senti_std, 'text_senti_min':text_senti_min, 'text_senti_max':text_senti_max}
+    update_data(table_name, features_data, condition)
+    data = {'session_id':session_id, 'seq':seq }
+    rows, number_rows = read_data(table_name, data)
+    emotion_label = send_request_to_ml(rows)
+    return emotion_label
+
+@app.route('/post_pic', methods = ['GET','POST'])
+def handle_request():
+    # section_id = request.args.get('section_id')
+    # seq = request.args.get('seq')
+    # device_id = request.args.get('device_id')
+    session_id = 'aa80d283431542f5a16adcdac91365ee'
+    seq = 1
+    device_id = 'vuzix_us_1116'
+    imagefile = request.files['image']
+    filename = werkzeug.utils.secure_filename(imagefile.filename)
+    imagefile.save(filename)
+    with open(filename, 'rb' ) as f:
+        data = f.read()
+    _url = 'https://westus2.api.cognitive.microsoft.com/face/v1.0/detect'
+    _key = 'bc027dc227484433a77d7b613807d230' #Here you have to paste your primary key
+    headers = dict()
+    headers['Ocp-Apim-Subscription-Key'] = _key
+    headers['Content-Type'] = 'application/octet-stream'
+
+    json = None
+    params = {
+        'returnFaceId': 'true',
+        'returnFaceLandmarks': 'false',
+        'returnFaceAttributes': 'age,gender,headPose,smile,facialHair,glasses,emotion,hair,makeup,occlusion,accessories,blur,exposure,noise',
+    }
+    result = processRequest( json, data, headers, params, _url )
+    if result == []:
+        return 'no face'
+    elif result is None:
+        return 'no picture'
+    firstface_dic = result[0]
+    faceAttributes_dic = firstface_dic['faceAttributes']
+    smile = faceAttributes_dic['smile']
+    gender = faceAttributes_dic['gender']
+    anger = faceAttributes_dic['emotion']['anger']
+    contempt = faceAttributes_dic['emotion']['contempt']
+    disgust = faceAttributes_dic['emotion']['disgust']
+    fear = faceAttributes_dic['emotion']['fear']
+    happiness = faceAttributes_dic['emotion']['happiness']
+    neutral = faceAttributes_dic['emotion']['neutral']
+    sadness = faceAttributes_dic['emotion']['sadness']
+    surprise = faceAttributes_dic['emotion']['surprise']
+    connection = get_connection()
+    date_time = datetime.datetime.now()
+    data = {'date':date_time, 'session_id':session_id, 'seq':seq, 'device_id':device_id, 'gender':gender, 'face_smile':smile, 'face_anger':anger, 'face_contempt':contempt, 'face_disgust':disgust, 'face_fear':fear, 'face_happiness':happiness, 'face_neutral':neutral, 'face_sadness':sadness, 'face_surprise':surprise}
+    table_name = 'transaction_table'
+    insert_data(table_name, data, connection)
+    close_connection(connection)
+    return str(1)
+
 @app.route('/post_pic_test', methods = ['POST'])
 def handle_request_test():
     imagefile = request.files['image']
@@ -98,53 +166,3 @@ def handle_request_test():
         return str(2) # positive
     else:
         return str(0) # neutral
-
-@app.route('/post_pic', methods = ['GET','POST'])
-def handle_request():
-    section_id = request.args.get('section_id')
-    seq = request.args.get('seq')
-    device_id = request.args.get('device_id')
-    # session_id = 'aa80d283431542f5a16adcdac91365ee'
-    # seq = 1
-    # device_id = 'vuzix_us_1116'
-    imagefile = request.files['image']
-    filename = werkzeug.utils.secure_filename(imagefile.filename)
-    imagefile.save(filename)
-    with open(filename, 'rb' ) as f:
-        data = f.read()
-    _url = 'https://westus2.api.cognitive.microsoft.com/face/v1.0/detect'
-    _key = 'bc027dc227484433a77d7b613807d230' #Here you have to paste your primary key
-    headers = dict()
-    headers['Ocp-Apim-Subscription-Key'] = _key
-    headers['Content-Type'] = 'application/octet-stream'
-
-    json = None
-    params = {
-        'returnFaceId': 'true',
-        'returnFaceLandmarks': 'false',
-        'returnFaceAttributes': 'age,gender,headPose,smile,facialHair,glasses,emotion,hair,makeup,occlusion,accessories,blur,exposure,noise',
-    }
-    result = processRequest( json, data, headers, params, _url )
-    if result == []:
-        return 'no face'
-    elif result is None:
-        return 'no picture'
-    firstface_dic = result[0]
-    faceAttributes_dic = firstface_dic['faceAttributes']
-    smile = faceAttributes_dic['smile']
-    gender = faceAttributes_dic['gender']
-    anger = faceAttributes_dic['emotion']['anger']
-    contempt = faceAttributes_dic['emotion']['contempt']
-    disgust = faceAttributes_dic['emotion']['disgust']
-    fear = faceAttributes_dic['emotion']['fear']
-    happiness = faceAttributes_dic['emotion']['happiness']
-    neutral = faceAttributes_dic['emotion']['neutral']
-    sadness = faceAttributes_dic['emotion']['sadness']
-    surprise = faceAttributes_dic['emotion']['surprise']
-    connection = get_connection()
-    date_time = datetime.datetime.now()
-    data = {'date':date_time, 'session_id':session_id, 'seq':seq, 'device_id':device_id, 'gender':gender, 'face_smile':smile, 'face_anger':anger, 'face_contempt':contempt, 'face_disgust':disgust, 'face_fear':fear, 'face_happiness':happiness, 'face_neutral':neutral, 'face_sadness':sadness, 'face_surprise':surprise}
-    table_name = 'transaction_table'
-    insert_data(table_name, data, connection)
-    close_connection(connection)
-    return str(1)
