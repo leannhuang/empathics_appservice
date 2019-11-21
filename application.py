@@ -156,7 +156,7 @@ def handle_request():
     return str(1)
 
 @app.route('/post_pic_1', methods = ['GET','POST'])
-def handle_request():
+def handle_request_post_pic_1():
     aggregation_result = request.args.get('json')
     # seq = request.args.get('seq')
     # device_id = request.args.get('device_id')
