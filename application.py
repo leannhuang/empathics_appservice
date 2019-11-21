@@ -158,15 +158,15 @@ def handle_request():
 
 @app.route('/post_pic_1', methods = ['GET','POST'])
 def handle_request_post_pic_1():
-    data = request.form.get('data')
-    # api_result = json.loads(request.form.get('data'))
-    # seq  = api_result["seq"]
-    # device_id  = api_result["device_id"]
-    # session_id  = api_result["session_id"]
+    # data = request.form.get('data')
+    api_result = json.loads(request.form.get('data'))
+    seq  = api_result["seq"]
+    device_id  = api_result["device_id"]
+    session_id  = api_result["session_id"]
     imagefile = request.files['image']
     filename = werkzeug.utils.secure_filename(imagefile.filename)
     imagefile.save(filename)
-    return data
+    return seq
 
 
 @app.route('/post_pic_test', methods = ['POST'])
