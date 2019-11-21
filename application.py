@@ -84,12 +84,10 @@ def handle_audio():
 
 @app.route('/post_pic', methods = ['GET','POST'])
 def handle_request():
-    section_id = request.args.get('section_id')
-    seq = request.args.get('seq')
-    device_id = request.args.get('device_id')
-    # session_id = 'aa80d283431542f5a16adcdac91365ex'
-    # seq = '1'
-    # device_id = 'vuzix_us_1116'
+    api_result = json.loads(request.form.get('data'))
+    seq  = api_result["seq"]
+    device_id  = api_result["device_id"]
+    session_id  = api_result["session_id"]
     imagefile = request.files['image']
     filename = werkzeug.utils.secure_filename(imagefile.filename)
     imagefile.save(filename)
