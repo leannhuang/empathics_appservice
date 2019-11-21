@@ -99,13 +99,13 @@ def handle_request():
     headers['Ocp-Apim-Subscription-Key'] = _key
     headers['Content-Type'] = 'application/octet-stream'
 
-    json = None
+    json_ = None
     params = {
         'returnFaceId': 'true',
         'returnFaceLandmarks': 'false',
         'returnFaceAttributes': 'age,gender,headPose,smile,facialHair,glasses,emotion,hair,makeup,occlusion,accessories,blur,exposure,noise',
     }
-    result = processRequest( json, data, headers, params, _url )
+    result = processRequest( json_, data, headers, params, _url )
     connection = get_connection()
     if result == []:
         date_time = datetime.datetime.now()
@@ -179,13 +179,13 @@ def handle_request_test():
     headers = dict()
     headers['Ocp-Apim-Subscription-Key'] = _key
     headers['Content-Type'] = 'application/octet-stream'
-    json = None
+    json_ = None
     params = {
         'returnFaceId': 'true',
         'returnFaceLandmarks': 'false',
         'returnFaceAttributes': 'age,gender,headPose,smile,facialHair,glasses,emotion,hair,makeup,occlusion,accessories,blur,exposure,noise',
     }
-    result = processRequest( json, data, headers, params, _url )
+    result = processRequest( json_, data, headers, params, _url )
     if result == []:
         return str(4) # no face
     elif result is None:
