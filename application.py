@@ -4,6 +4,11 @@ import werkzeug
 import numpy
 import uuid
 import json
+import soundfile as sf
+import random
+import os
+import numpy as np
+from python_speech_features import mfcc
 from CRUD_m import insert_data
 from CRUD_m import create_data
 from CRUD_m import read_data
@@ -68,19 +73,23 @@ def handle_audio():
     audioefile = request.files['audio']
     filename = werkzeug.utils.secure_filename(audiofile.filename)
     audioefile.save(filename)
-    session_id = request.json['session_id']
-    seq = request.json['seq']
-    connection = get_connection()
-    table_name = 'transaction_table'
-    text_senti_avg, text_senti_std, text_senti_min, text_senti_max = calculate_features(table_name, session_id, seq, connection)
-    condition =  {'session_id': session_id, 'seq': seq}
-    features_data = {'text_senti_avg': text_senti_avg, 'text_senti_std': text_senti_std, 'text_senti_min':text_senti_min, 'text_senti_max':text_senti_max}
-    update_data(table_name, features_data, condition, connection)
-    data = {'session_id':session_id, 'seq':seq }
-    rows, number_rows = read_data(table_name, data, connection)
-    emotion_label = send_request_to_ml(rows)
-    close_connection(connection)
-    return emotion_label
+    signal,rate = sf.read(filename)
+    wav_length = len(signal)/rate  #second
+
+    # for index in range(sample_per_wav): # take ten windows in an audio file
+    window_seed = random.uniform(0,abs(wav_length-self.window_length))
+    window_range = (window_seed,window_seed+self.window_length)
+    window_signal = signal[int(window_range[0]*rate):int(window_range[1]*rate)]
+
+    mfcc_feat = mfcc(window_signal)
+    mfcc_feat_scale = mfcc_feat / np.linalg.norm(mfcc_feat)
+            # result_array=(mfcc_feat-np.min(mfcc_feat))/np.ptp(mfcc_feat)
+
+    mfcc_feat_scale = mfcc_feat_scale[np.newaxis,:]
+    model = tf.keras.models.load_model('./model')
+    predictions = model.predict(data_x)
+
+    return predictions
 
 @app.route('/post_pic', methods = ['GET','POST'])
 def handle_request():
