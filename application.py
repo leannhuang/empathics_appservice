@@ -81,9 +81,8 @@ def handle_audio():
     mfcc_feat_scale = mfcc_feat / np.linalg.norm(mfcc_feat)
             # result_array=(mfcc_feat-np.min(mfcc_feat))/np.ptp(mfcc_feat)
 
-    mfcc_feat_scale = mfcc_feat_scale[np.newaxis,:]
     model = tf.keras.models.load_model('./model')
-    predictions = model.predict(data_x)
+    predictions = model.predict(mfcc_feat_scale)
 
     return predictions
 
@@ -138,6 +137,19 @@ def handle_request():
             connection = update_data(table_name, data, condition, connection)
         close_connection(connection)
         return str(5)
+    elif result[0]['faceAttributes'] is None:
+        date_time = datetime.datetime.now()
+        data = {'date':date_time, 'session_id':session_id, 'seq':seq, 'device_id':device_id, 'face_smile':0, 'face_anger':0, 'face_contempt':0, 'face_disgust':0, 'face_fear':0, 'face_happiness':0, 'face_neutral':0, 'face_sadness':0, 'face_surprise':0}
+        table_name = 'transaction_table'
+        r_data = {'session_id':session_id, 'seq':seq}
+        row, number_rows = read_data(table_name, r_data, connection)
+        if number_rows == 0:
+            connection = insert_data(table_name, data, connection)
+        else:
+            condition = {'session_id': session_id, 'seq': seq}
+            connection = update_data(table_name, data, condition, connection)
+        close_connection(connection)
+        return str(6)
 
     firstface_dic = result[0]
     faceAttributes_dic = firstface_dic['faceAttributes']
