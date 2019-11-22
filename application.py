@@ -4,11 +4,7 @@ import werkzeug
 import numpy
 import uuid
 import json
-import soundfile as sf
-import random
-import os
 import numpy as np
-from python_speech_features import mfcc
 from CRUD_m import insert_data
 from CRUD_m import create_data
 from CRUD_m import read_data
