@@ -167,6 +167,8 @@ def handle_request():
     date_time = datetime.datetime.now()
     data = {'date':date_time, 'session_id':session_id, 'seq':seq, 'device_id':device_id, 'face_smile':smile, 'face_anger':anger, 'face_contempt':contempt, 'face_disgust':disgust, 'face_fear':fear, 'face_happiness':happiness, 'face_neutral':neutral, 'face_sadness':sadness, 'face_surprise':surprise}
     table_name = 'transaction_table'
+    r_data = {'session_id':session_id, 'seq':seq}
+    row, number_rows = read_data(table_name, r_data, connection)
     if number_rows == 0:
         connection = insert_data(table_name, data, connection)
     else:
