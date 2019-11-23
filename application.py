@@ -137,7 +137,7 @@ def handle_request():
             connection = update_data(table_name, data, condition, connection)
         close_connection(connection)
         return str(5)
-    elif result[0]['faceAttributes'] is None:
+    elif result[0]['faceAttributes'] == 'null':
         date_time = datetime.datetime.now()
         data = {'date':date_time, 'session_id':session_id, 'seq':seq, 'device_id':device_id, 'face_smile':0, 'face_anger':0, 'face_contempt':0, 'face_disgust':0, 'face_fear':0, 'face_happiness':0, 'face_neutral':0, 'face_sadness':0, 'face_surprise':0}
         table_name = 'transaction_table'
