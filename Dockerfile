@@ -1,4 +1,4 @@
-FROM oryxprod/python-3.7:20190223.1
+FROM mcr.microsoft.com/oryx/python:3.6-20190712.5
 LABEL maintainer="appsvc-images@microsoft.com"
 
 # Web Site Home
@@ -27,9 +27,8 @@ RUN apt-get update \
     && pip install tensorflow \
     && pip install requests \
     && pip install uuid \
-    && pip install pysndfile \
     && pip install soundfile \
-    && pip install python_speech_features \
+    && pip install python_speech_features 
 
 
 WORKDIR ${HOME_SITE}
@@ -54,6 +53,7 @@ COPY application.py /opt/defaultsite
 COPY process_image.py /opt/defaultsite
 COPY stacking_model_api.py /opt/defaultsite
 COPY CRUD_m.py /opt/defaultsite
+COPY model /opt/defaultsite/model
 ADD odbcinst.ini /etc/
 
 # configure startup
