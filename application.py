@@ -4,7 +4,11 @@ import werkzeug
 import numpy
 import uuid
 import json
+import soundfile as sf
+import random
+import os
 import numpy as np
+from python_speech_features import mfcc
 from CRUD_m import insert_data
 from CRUD_m import create_data
 from CRUD_m import read_data
@@ -66,25 +70,47 @@ def handle_ml():
 
 @app.route('/post_audio', methods = ['POST'])
 def handle_audio():
+    api_result = json.loads(request.form.get('data'))
+    seq  = api_result["seq"]
+    device_id  = api_result["device_id"]
+    session_id  = api_result["session_id"]
     audioefile = request.files['audio']
     filename = werkzeug.utils.secure_filename(audiofile.filename)
     audioefile.save(filename)
+    filename = r'trimmed_157000.wav'
     signal,rate = sf.read(filename)
     wav_length = len(signal)/rate  #second
-
+    window_length = 1
     # for index in range(sample_per_wav): # take ten windows in an audio file
-    window_seed = random.uniform(0,abs(wav_length-self.window_length))
-    window_range = (window_seed,window_seed+self.window_length)
+    window_seed = random.uniform(0,abs(wav_length-window_length))
+    window_range = (window_seed,window_seed+window_length)
     window_signal = signal[int(window_range[0]*rate):int(window_range[1]*rate)]
 
     mfcc_feat = mfcc(window_signal)
     mfcc_feat_scale = mfcc_feat / np.linalg.norm(mfcc_feat)
+    mfcc_feat_scale = mfcc_feat_scale[np.newaxis,:]
+    print(mfcc_feat_scale.shape)
             # result_array=(mfcc_feat-np.min(mfcc_feat))/np.ptp(mfcc_feat)
 
     model = tf.keras.models.load_model('./model')
     predictions = model.predict(mfcc_feat_scale)
-
-    return predictions
+    print(predictions)
+    into_sad_prob = predictions[0][0]
+    into_angry_prob = predictions[0][1]
+    into_happy_prob= predictions[0][2]
+    into_neutral_prob = predictions[0][3]
+    # table_name = 'transaction_table'
+    # data = {'session_id':session_id, 'seq':seq, 'into_sad_prob':text_senti_score, 'into_angry_prob':into_angry_prob, 'into_happy_prob':into_happy_prob, 'into_neutral_prob':into_neutral_prob}
+    # r_data = {'session_id':session_id, 'seq':seq}
+    # connection = get_connection()
+    # row, number_rows = read_data(table_name, r_data, connection)
+    # if number_rows == 0:
+    #     connection = insert_data(table_name, data, connection)
+    # else:
+    #     condition = {'session_id': session_id, 'seq': seq}
+    #     connection = update_data(table_name, data, condition, connection)
+    # close_connection(connection)
+    return str(into_sad_prob)
 
 @app.route('/post_pic', methods = ['GET','POST'])
 def handle_request():

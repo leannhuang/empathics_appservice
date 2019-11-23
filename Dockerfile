@@ -23,10 +23,13 @@ RUN apt-get update \
     && pip install pyodbc \
     && pip install flask \
     && pip install Werkzeug \
-    && pip install numpy
+    && pip install numpy \
+    && pip install tensorflow \
+    && pip install requests \
+    && pip install uuid \
+    && pip install soundfile \
+    && pip install python_speech_features 
 
-RUN pip install requests
-RUN pip install uuid
 WORKDIR ${HOME_SITE}
 
 EXPOSE 8000
