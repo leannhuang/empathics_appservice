@@ -151,6 +151,10 @@ def handle_request():
         close_connection(connection)
         return str(6)
 
+    if number_rows == 0:
+        connection = insert_data(table_name, data, connection)
+    else:
+
     firstface_dic = result[0]
     faceAttributes_dic = firstface_dic['faceAttributes']
     smile = faceAttributes_dic['smile']
@@ -167,7 +171,11 @@ def handle_request():
     date_time = datetime.datetime.now()
     data = {'date':date_time, 'session_id':session_id, 'seq':seq, 'device_id':device_id, 'face_smile':smile, 'face_anger':anger, 'face_contempt':contempt, 'face_disgust':disgust, 'face_fear':fear, 'face_happiness':happiness, 'face_neutral':neutral, 'face_sadness':sadness, 'face_surprise':surprise}
     table_name = 'transaction_table'
-    connection = insert_data(table_name, data, connection)
+    if number_rows == 0:
+        connection = insert_data(table_name, data, connection)
+    else:
+        condition = {'session_id': session_id, 'seq': seq}
+        connection = update_data(table_name, data, condition, connection)
     close_connection(connection)
     return str(1)
 
