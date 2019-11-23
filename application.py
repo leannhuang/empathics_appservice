@@ -73,27 +73,31 @@ def handle_audio():
     audioefile = request.files['audio']
     filename = werkzeug.utils.secure_filename(audiofile.filename)
     audioefile.save(filename)
-    signal,rate = sf.read(filename)
-    wav_length = len(signal)/rate  #second
-    window_length = 1
-    # for index in range(sample_per_wav): # take ten windows in an audio file
-    window_seed = random.uniform(0,abs(wav_length-window_length))
-    window_range = (window_seed,window_seed+window_length)
-    window_signal = signal[int(window_range[0]*rate):int(window_range[1]*rate)]
+    if filename is not None:
+        signal,rate = sf.read(filename)
+        wav_length = len(signal)/rate  #second
+        window_length = 1
+        # for index in range(sample_per_wav): # take ten windows in an audio file
+        window_seed = random.uniform(0,abs(wav_length-window_length))
+        window_range = (window_seed,window_seed+window_length)
+        window_signal = signal[int(window_range[0]*rate):int(window_range[1]*rate)]
 
-    mfcc_feat = mfcc(window_signal)
-    mfcc_feat_scale = mfcc_feat / np.linalg.norm(mfcc_feat)
-    mfcc_feat_scale = mfcc_feat_scale[np.newaxis,:]
-    print(mfcc_feat_scale.shape)
-            # result_array=(mfcc_feat-np.min(mfcc_feat))/np.ptp(mfcc_feat)
+        mfcc_feat = mfcc(window_signal)
+        mfcc_feat_scale = mfcc_feat / np.linalg.norm(mfcc_feat)
+        mfcc_feat_scale = mfcc_feat_scale[np.newaxis,:]
+        print(mfcc_feat_scale.shape)
+                # result_array=(mfcc_feat-np.min(mfcc_feat))/np.ptp(mfcc_feat)
 
-    model = tf.keras.models.load_model('./model')
-    predictions = model.predict(mfcc_feat_scale)
-    print(predictions)
-    into_sad_prob = predictions[0][0]
-    into_angry_prob = predictions[0][1]
-    into_happy_prob= predictions[0][2]
-    into_neutral_prob = predictions[0][3]
+        model = tf.keras.models.load_model('./model')
+        predictions = model.predict(mfcc_feat_scale)
+        print(predictions)
+        into_sad_prob = predictions[0][0]
+        into_angry_prob = predictions[0][1]
+        into_happy_prob= predictions[0][2]
+        into_neutral_prob = predictions[0][3]
+        return str(into_sad_prob)
+    else:
+        return str(0)
     # table_name = 'transaction_table'
     # data = {'session_id':session_id, 'seq':seq, 'into_sad_prob':text_senti_score, 'into_angry_prob':into_angry_prob, 'into_happy_prob':into_happy_prob, 'into_neutral_prob':into_neutral_prob}
     # r_data = {'session_id':session_id, 'seq':seq}
@@ -105,7 +109,7 @@ def handle_audio():
     #     condition = {'session_id': session_id, 'seq': seq}
     #     connection = update_data(table_name, data, condition, connection)
     # close_connection(connection)
-    return str(into_sad_prob)
+
 
 @app.route('/post_pic', methods = ['GET','POST'])
 def handle_request():
