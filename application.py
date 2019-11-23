@@ -151,10 +151,6 @@ def handle_request():
         close_connection(connection)
         return str(6)
 
-    if number_rows == 0:
-        connection = insert_data(table_name, data, connection)
-    else:
-
     firstface_dic = result[0]
     faceAttributes_dic = firstface_dic['faceAttributes']
     smile = faceAttributes_dic['smile']
