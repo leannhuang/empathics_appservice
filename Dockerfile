@@ -27,9 +27,10 @@ RUN apt-get update \
     && pip install tensorflow \
     && pip install requests \
     && pip install uuid \
+    && pip install pysndfile \
     && pip install soundfile \
     && pip install python_speech_features \
-    && pip install libsndfile1
+
 
 WORKDIR ${HOME_SITE}
 
