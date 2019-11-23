@@ -55,8 +55,8 @@ def handle_ml():
     condition =  {'session_id': session_id, 'seq': seq}
     features_data = {'text_senti_avg': text_senti_avg, 'text_senti_std': text_senti_std, 'text_senti_min':text_senti_min, 'text_senti_max':text_senti_max}
     update_data(table_name, features_data, condition, connection)
-    data = {'session_id':session_id, 'seq':seq }
-    rows, number_rows = read_data(table_name, data, connection)
+    r_data = {'session_id':session_id, 'seq':seq }
+    rows, number_rows = read_data(table_name, r_data, connection)
     emotion_label = send_request_to_ml(rows)
     features_data = {'result':emotion_label}
     update_data(table_name, features_data, condition, connection)
