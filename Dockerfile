@@ -28,7 +28,8 @@ RUN apt-get update \
     && pip install requests \
     && pip install uuid \
     && pip install soundfile \
-    && pip install python_speech_features 
+    && pip install python_speech_features \
+    && pip install libsndfile1
 
 WORKDIR ${HOME_SITE}
 
