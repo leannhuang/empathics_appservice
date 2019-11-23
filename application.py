@@ -73,7 +73,6 @@ def handle_audio():
     audioefile = request.files['audio']
     filename = werkzeug.utils.secure_filename(audiofile.filename)
     audioefile.save(filename)
-    filename = r'trimmed_157000.wav'
     signal,rate = sf.read(filename)
     wav_length = len(signal)/rate  #second
     window_length = 1
