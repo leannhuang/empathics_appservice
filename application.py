@@ -72,7 +72,7 @@ def handle_audio():
     session_id  = api_result["session_id"]
     audiofile = request.files['audio']
     filename = werkzeug.utils.secure_filename(audiofile.filename)
-    audioefile.save(filename)
+    audiofile.save(filename)
     if filename is not None:
         signal,rate = sf.read(filename)
         wav_length = len(signal)/rate  #second
