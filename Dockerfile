@@ -28,6 +28,8 @@ RUN apt-get update \
     && pip install Werkzeug \
     && pip install numpy \
     && pip install tensorflow \
+    && pip install tensorboard \
+    && pip install tensorflow-estimator \
     && pip install requests \
     && pip install uuid \
     && pip install soundfile \

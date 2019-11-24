@@ -8,7 +8,8 @@ import soundfile as sf
 import random
 import os
 import numpy as np
-import tensorflow as tf
+import tensorflow
+from tensorflow.keras.models import Sequential
 from python_speech_features import mfcc
 from CRUD_m import insert_data
 from CRUD_m import create_data
@@ -89,7 +90,7 @@ def handle_audio():
         print(mfcc_feat_scale.shape)
                 # result_array=(mfcc_feat-np.min(mfcc_feat))/np.ptp(mfcc_feat)
 
-        model = tf.keras.models.load_model('./model')
+        model = tensorflow.keras.models.load_model('./model')
         predictions = model.predict(mfcc_feat_scale)
         print(predictions)
         into_sad_prob = predictions[0][0]
