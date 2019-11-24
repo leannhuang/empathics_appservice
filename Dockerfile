@@ -17,6 +17,7 @@ RUN apt-get update \
         unixodbc \
         freetds-common freetds-bin freetds-dev tdsodbc \
         libsndfile1 \
+        libsndfile1-dev \
     && pip install --upgrade pip \
     && pip install subprocess32 \
     && pip install gunicorn \
