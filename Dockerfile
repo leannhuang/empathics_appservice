@@ -15,7 +15,8 @@ RUN apt-get update \
         g++ \
         unixodbc-dev \
         unixodbc \
-        freetds-common freetds-bin freetds-dev tdsodbc\
+        freetds-common freetds-bin freetds-dev tdsodbc \
+        libsndfile1 \
     && pip install --upgrade pip \
     && pip install subprocess32 \
     && pip install gunicorn \
@@ -29,7 +30,6 @@ RUN apt-get update \
     && pip install uuid \
     && pip install soundfile \
     && pip install python_speech_features 
-
 
 WORKDIR ${HOME_SITE}
 
