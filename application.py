@@ -8,6 +8,7 @@ import soundfile as sf
 import random
 import os
 import numpy as np
+import tensorflow as tf
 from python_speech_features import mfcc
 from CRUD_m import insert_data
 from CRUD_m import create_data
