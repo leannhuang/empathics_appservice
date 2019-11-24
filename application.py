@@ -97,7 +97,17 @@ def handle_audio():
         into_angry_prob = predictions[0][1]
         into_happy_prob= predictions[0][2]
         into_neutral_prob = predictions[0][3]
-        return str(into_sad_prob)
+        table_name = 'transaction_table'
+        data = {'session_id':session_id, 'seq':seq, 'into_sad_prob':into_sad_prob, 'into_angry_prob':into_angry_prob, 'into_happy_prob':into_happy_prob, 'into_neutral_prob':into_neutral_prob}
+        r_data = {'session_id':session_id, 'seq':seq}
+        connection = get_connection()
+        row, number_rows = read_data(table_name, r_data, connection)
+        if number_rows == 0:
+            connection = insert_data(table_name, data, connection)
+        else:
+            condition = {'session_id': session_id, 'seq': seq}
+            connection = update_data(table_name, data, condition, connection)
+        return str(1)
     else:
         return str(0)
     # table_name = 'transaction_table'
