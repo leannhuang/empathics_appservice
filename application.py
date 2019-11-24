@@ -70,7 +70,7 @@ def handle_audio():
     seq  = api_result["seq"]
     device_id  = api_result["device_id"]
     session_id  = api_result["session_id"]
-    audioefile = request.files['audio']
+    audiofile = request.files['audio']
     filename = werkzeug.utils.secure_filename(audiofile.filename)
     audioefile.save(filename)
     if filename is not None:
