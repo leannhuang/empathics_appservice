@@ -18,6 +18,7 @@ RUN apt-get update \
         freetds-common freetds-bin freetds-dev tdsodbc \
         libsndfile1 \
         libsndfile1-dev \
+        python-scipy \
     && pip install --upgrade pip \
     && pip install subprocess32 \
     && pip install gunicorn \
@@ -30,7 +31,8 @@ RUN apt-get update \
     && pip install requests \
     && pip install uuid \
     && pip install soundfile \
-    && pip install python_speech_features 
+    && pip install python_speech_features \
+    && pip install scipy
 
 WORKDIR ${HOME_SITE}
 
