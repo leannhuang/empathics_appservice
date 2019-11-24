@@ -98,7 +98,7 @@ def handle_audio():
         into_happy_prob= predictions[0][2]
         into_neutral_prob = predictions[0][3]
         table_name = 'transaction_table'
-        data = {'session_id':session_id, 'seq':seq, 'into_sad_prob':into_sad_prob, 'into_angry_prob':into_angry_prob, 'into_happy_prob':into_happy_prob, 'into_neutral_prob':into_neutral_prob}
+        data = {'session_id':session_id, 'seq':seq, 'into_sad_prob': str(into_sad_prob), 'into_angry_prob': str(into_angry_prob), 'into_happy_prob': str(into_happy_prob), 'into_neutral_prob':str(into_neutral_prob)}
         r_data = {'session_id':session_id, 'seq':seq}
         connection = get_connection()
         row, number_rows = read_data(table_name, r_data, connection)
