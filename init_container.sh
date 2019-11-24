@@ -1,34 +1,27 @@
 #!/usr/bin/env bash
 
 cat >/etc/motd <<EOL 
-
   _____                               
   /  _  \ __________ _________   ____  
  /  /_\  \\___   /  |  \_  __ \_/ __ \ 
 /    |    \/    /|  |  /|  | \/\  ___/ 
 \____|__  /_____ \____/ |__|    \___  >
         \/      \/                  \/ 
-
 A P P   S E R V I C E   O N   L I N U X
-
 Documentation: http://aka.ms/webapp-linux
-
 EOL
 cat /etc/motd
 
 sed -i "s/SSH_PORT/$SSH_PORT/g" /etc/ssh/sshd_config
 service ssh start
 
-
 # Get environment variables to show up in SSH session
-eval $(printenv | awk -F= '{print "export " $1"="$2 }' >> /etc/profile)
+eval $(printenv | sed -n "s/^\([^=]\+\)=\(.*\)$/export \1=\2/p" | sed 's/"/\\\"/g' | sed '/=/s//="/' | sed 's/$/"/' >> /etc/profile)
 
 echo "$@" > /opt/startup/startupCommand
 chmod 755 /opt/startup/startupCommand
 
-#oryx startup script generator
-
-oryxArgs='-appPath /home/site/wwwroot -output /opt/startup/startup.sh -virtualEnvName antenv -defaultApp /opt/defaultsite'
+oryxArgs="-appPath /home/site/wwwroot -output /opt/startup/startup.sh -virtualEnvName antenv3.6 -defaultApp /opt/defaultsite -bindPort $PORT"
 if [ $# -eq 0 ]; then
     echo 'App Command Line not configured, will attempt auto-detect'
 else
@@ -63,5 +56,3 @@ eval "oryx $oryxArgs"
 chmod +x /opt/startup/startup.sh
 #launch startup script
 /opt/startup/startup.sh 
-
-

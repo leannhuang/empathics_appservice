@@ -7,7 +7,7 @@ STARTUP_COMMAND_FILE="/opt/startup/startupCommand"
 APPSVC_VIRTUAL_ENV="antenv"
 
 # Temp patch. Remove when Kudu script is available.
-os.environ["PYTHONPATH"] = HOME_SITE + "/antenv/lib/python3.7/site-packages"
+os.environ["PYTHONPATH"] = HOME_SITE + "/antenv3.6/lib/python3.6/site-packages"
 
 def subprocess_cmd(command):
     print ('executing:')
@@ -44,10 +44,10 @@ def custom_check():
               else:
                   print('invalid data in startup script, ignoring it.')
                   return None
-                
+
               return startupScript
 
-## Django check: If 'wsgi.py' is provided, identify as Django. 
+## Django check: If 'wsgi.py' is provided, identify as Django.
 def check_django():
     with os.scandir(HOME_SITE) as siteRoot:
         for entry in siteRoot:
@@ -71,15 +71,14 @@ def check_flask():
                    if (entry.name == 'app.py'):
                        print("found flask app")
                        return "app:app"
-
    return None
 
 def start_server():
-    
+
     cmd = custom_check()
     if cmd is not None:
         print('custom startup found: ' + cmd);
-        subprocess_cmd('. antenv/bin/activate')
+        subprocess_cmd('. antenv3.6/bin/activate')
         if 'python' in cmd:
             subprocess_cmd(cmd)
 
@@ -94,7 +93,7 @@ def start_server():
 
     cmd = check_django()
     if cmd is not None:
-        subprocess_cmd('. antenv/bin/activate')
+        subprocess_cmd('. antenv3.6/bin/activate')
         subprocess_cmd(
                 'GUNICORN_CMD_ARGS="--bind=0.0.0.0 --timeout 600" gunicorn ' + cmd
                )
@@ -102,13 +101,13 @@ def start_server():
 
     cmd = check_flask()
     if cmd is not None:
-        subprocess_cmd('. antenv/bin/activate')
+        subprocess_cmd('. antenv3.6/bin/activate')
         subprocess_cmd(
                 'GUNICORN_CMD_ARGS="--bind=0.0.0.0 --timeout 600" gunicorn ' + cmd
                )
         return
 
-    else:          
+    else:
         print('starting default app')
         subprocess_cmd(
               'GUNICORN_CMD_ARGS="--bind=0.0.0.0 --chdir /opt/defaultsite" gunicorn application:app'
