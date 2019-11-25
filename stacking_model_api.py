@@ -46,7 +46,7 @@ def send_request_to_ml(rows):
         negative_probability  = api_result["Results"]["output1"]["value"]["Values"][0][1]
         positive_probability  = api_result["Results"]["output1"]["value"]["Values"][0][2]
         label  = api_result["Results"]["output1"]["value"]["Values"][0][3]
-        return label
+        return str(label)
 
     except urllib.error.HTTPError as error:
         print("The request failed with status code: " + str(error.code))
