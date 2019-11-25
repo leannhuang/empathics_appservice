@@ -37,13 +37,16 @@ def handle_senti_score_request():
     session_id = request.json['session_id']
     seq = request.json['seq']
     text_senti_score = request.json['sentiment_score']
+    again = request.json['again']
     # upadte if record exists
     table_name = 'transaction_table'
     data = {'session_id':session_id, 'seq':seq, 'text_senti_score':text_senti_score}
-    r_data = {'session_id':session_id, 'seq':seq}
     connection = get_connection()
-    row, number_rows = read_data(table_name, r_data, connection)
-    connection = insert_data(table_name, data, connection)
+    if again == '1':
+        condition = {'session_id': session_id, 'seq': seq}
+        connection = update_data(table_name, data, condition, connection)
+    elif again == '0':
+        connection = insert_data(table_name, data, connection)
     close_connection(connection)
     return str(1)
 
